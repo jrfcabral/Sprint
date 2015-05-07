@@ -40,12 +40,13 @@ public class Game extends ApplicationAdapter {
 		debugRenderer.render(world, camera.combined);		
 		world.step(1/45f, 6, 2);
 		boolean throttle = Gdx.input.isKeyPressed(Input.Keys.W);
+		boolean brake = Gdx.input.isKeyPressed(Input.Keys.S);
 		if (Gdx.input.isKeyPressed(Input.Keys.A))
-			car.update(throttle, Car.SteerDirection.SteerLeft);
+			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
 		else if (Gdx.input.isKeyPressed(Input.Keys.D))
-			car.update(throttle, Car.SteerDirection.SteerRight);
+			car.update(throttle,brake, Car.SteerDirection.SteerRight);
 		else
-			car.update(throttle, Car.SteerDirection.SteerNone);
+			car.update(throttle,brake, Car.SteerDirection.SteerNone);
 	}
 	public static void main(){
 		Game game = new Game();		
