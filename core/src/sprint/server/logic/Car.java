@@ -47,7 +47,7 @@ public class Car{
 		shape.setAsBox(20, 10);
 		fdef.shape = shape;
 		fdef.density = 1f;
-		fdef.restitution = 1f;
+		fdef.restitution = 0f;
 		fdef.friction = 1f;
 		body.createFixture(fdef);
 		shape.dispose();
@@ -66,24 +66,30 @@ public class Car{
 		
 		switch(dir){
 		case SteerLeft:
-			if (body.getAngularVelocity() < 2000)
-			body.applyTorque(-5000, true);
+			if (body.getAngularVelocity() > -1)
+			body.setAngularVelocity(body.getAngularVelocity()-0.1f);
 			break;
 		case SteerRight:
-			if (body.getAngularVelocity() < 2000)
-			body.applyTorque(5000, true);
+			if (body.getAngularVelocity() < 1)
+				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
+			
 			break;
 		default:break;
 		}
+		if (body.getLinearVelocity().isZero())
+			body.setAngularVelocity(0);
 		
 		if (brake){
-			body.applyForceToCenter(new Vector2(-2000,0).rotate(body.getAngle()), true);
+			if (!body.getLinearVelocity().isZero())
+			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()).rotate(180), true);
+			
 		}
 			
 		else if (throttle){
-			body.applyForceToCenter(new Vector2(2000,0).rotate(body.getAngle()), true);
+			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()), true);
 		}
 		linearizeVelocity(0.5f);
+		System.out.println(body.getAngularVelocity());
 	}
 	
 	/**
@@ -95,15 +101,16 @@ public class Car{
 		if (factor < 0 || factor > 1)
 			throw new IllegalArgumentException();
 		
-		System.out.println("old"+ body.getLinearVelocity());		
-		Vector2 forwardDirection = new Vector2(1,0);		
-		forwardDirection.rotate((float) Math.toDegrees(body.getAngle()));
-		Vector2 rightDirection = forwardDirection.cpy();
-		rightDirection.rotate(-90f);
-		Vector2 forwardVelocity = forwardDirection.scl(body.getLinearVelocity().dot(forwardDirection));
-		Vector2 rightVelocity = rightDirection.scl(body.getLinearVelocity().dot(rightDirection)*factor);
-		body.setLinearVelocity(forwardVelocity.add(rightVelocity));
-		System.out.println("new"+body.getLinearVelocity());
 				
-	}
+		Vector2 forwardDirection = body.getWorldVector(new Vector2(0,1));
+		
+		Vector2 rightDirection = body.getWorldVector(new Vector2(1,0));		
+		Vector2 forwardVelocity = forwardDirection.scl(body.getLinearVelocity().dot(forwardDirection));
+		
+		Vector2 rightVelocity = rightDirection.scl(body.getLinearVelocity().dot(rightDirection)*factor);
+		
+		body.setLinearVelocity(forwardVelocity.x+rightVelocity.x, forwardVelocity.y+rightVelocity.y);
+		
+				
+	}	
 }
