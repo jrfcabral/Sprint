@@ -42,8 +42,8 @@ public class Car{
 		def.position.set(new Vector2(100,100));
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
-		CircleShape shape = new CircleShape();
-		shape.setRadius(10);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(20, 10);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 1f;
@@ -55,33 +55,35 @@ public class Car{
 		angle = (float) (3*Math.PI);
 	}
 	
+	/**
+	 * Updates car position
+	 * @param throttle whether the car has been accelerated on this time step
+	 * @param dir direction of the steering
+	 */
 	public void update (boolean throttle, SteerDirection dir)
 	{
 		switch(dir){
 		case SteerLeft:		
-			this.angle += maxSteer;
+			body.applyTorque(-10000, true);
 			break;
 		case SteerRight:
-			this.angle -= maxSteer;
+			body.applyTorque(10000, true);
 			break;
 		default:break;
 		}
-		angle = (float) (angle%(Math.PI*2));
-		
-		Vector2 force = new Vector2(1000,0);
-		force = force.rotate((float) Math.toDegrees(angle));
-		
-		
+		System.out.println(body.getAngularVelocity());
 		if (throttle){
-			Vector2 currentDirection = new Vector2(1,0);
-			currentDirection.rotate((float) Math.toDegrees(angle));
-			
-			
-			body.setLinearVelocity(new Vector2(body.getLinearVelocity().x= body.getLinearVelocity().x*body.getLinearVelocity().dot(currentDirection),body.getLinearVelocity().y= body.getLinearVelocity().x*body.getLinearVelocity().dot(currentDirection)));
-			
-			body.applyForceToCenter(force, true);			
-		}
-		body.setTransform(body.getPosition(), angle);
-		
+		}		
+	}
+	
+	/**
+	 * Adjusts the current linear velocity so that it points in the direction of the current angle of the car. A factor of 1 means that all velocity not in the direction
+	 * of the car will be killed, a 0 factor makes this call do nothing
+	 * @param factor value between 0 and 1
+	 */
+	private void linearizeVelocity(float factor){
+		if (factor < 0 || factor > 1)
+			throw new IllegalArgumentException();
+				
 	}
 }
