@@ -45,7 +45,7 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);		
 		batch.begin();
-			car.getSprite().draw(batch);
+		//	car.getSprite().draw(batch);
 		batch.end();
 		debugRenderer.render(world, camera.combined);		
 		world.step(1/60f, 6, 2);

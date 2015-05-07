@@ -66,15 +66,20 @@ public class Car{
 		
 		switch(dir){
 		case SteerLeft:
-			if (body.getAngularVelocity() > -1)
+			if (body.getAngularVelocity() > -1.5)
 			body.setAngularVelocity(body.getAngularVelocity()-0.1f);
 			break;
 		case SteerRight:
-			if (body.getAngularVelocity() < 1)
+			if (body.getAngularVelocity() < 1.5)
 				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
 			
 			break;
-		default:break;
+		default:
+			if (body.getAngularVelocity() > 0)
+				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()-0.1, 0));
+			else if (body.getAngularVelocity() < 0)
+				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1, 0));
+			break;
 		}
 		if (body.getLinearVelocity().isZero())
 			body.setAngularVelocity(0);
