@@ -40,11 +40,11 @@ public class Car{
 	{	
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
-		def.position.set(new Vector2(100,100));
+		def.position.set(new Vector2(0,0));
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(20, 10);
+		shape.setAsBox(1.5f, 1f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0f;
@@ -66,17 +66,17 @@ public class Car{
 		
 		switch(dir){
 		case SteerLeft:
-			if (body.getAngularVelocity() > -1.5)
+			if (body.getAngularVelocity() > -3.5)
 			body.setAngularVelocity(body.getAngularVelocity()-0.1f);
 			break;
 		case SteerRight:
-			if (body.getAngularVelocity() < 1.5)
+			if (body.getAngularVelocity() < 3.5)
 				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
 			
 			break;
 		default:
 			if (body.getAngularVelocity() > 0)
-				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()-0.1, 0));
+				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.1, 0));
 			else if (body.getAngularVelocity() < 0)
 				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1, 0));
 			break;
@@ -84,17 +84,16 @@ public class Car{
 		if (body.getLinearVelocity().isZero())
 			body.setAngularVelocity(0);
 		
-		if (brake){
-			if (!body.getLinearVelocity().isZero())
-			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()).rotate(180), true);
-			
+		if (brake){			
+			body.applyForce(new Vector2(30,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 		}
 			
 		else if (throttle){
-			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()), true);
+			body.applyForce(new Vector2(3,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			
 		}
-		linearizeVelocity(0.5f);
-		System.out.println(body.getAngularVelocity());
+		
+		linearizeVelocity(0.9f);
 	}
 	
 	/**
@@ -106,16 +105,15 @@ public class Car{
 		if (factor < 0 || factor > 1)
 			throw new IllegalArgumentException();
 		
-				
-		Vector2 forwardDirection = body.getWorldVector(new Vector2(0,1));
 		
-		Vector2 rightDirection = body.getWorldVector(new Vector2(1,0));		
-		Vector2 forwardVelocity = forwardDirection.scl(body.getLinearVelocity().dot(forwardDirection));
-		
-		Vector2 rightVelocity = rightDirection.scl(body.getLinearVelocity().dot(rightDirection)*factor);
-		
-		body.setLinearVelocity(forwardVelocity.x+rightVelocity.x, forwardVelocity.y+rightVelocity.y);
-		
+		System.out.println("in"+body.getLinearVelocity());
+		Vector2 forwardDir = new Vector2(1,0);
+		forwardDir.rotate((float) Math.toDegrees(body.getAngle()));
+		Vector2 currVelocity = body.getLinearVelocity().cpy();
+		float dotprod = forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y;
+		System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
+		body.setLinearVelocity(forwardDir.x*dotprod, forwardDir.y*dotprod);
+		System.out.println("out"+body.getLinearVelocity());
 				
 	}	
 }

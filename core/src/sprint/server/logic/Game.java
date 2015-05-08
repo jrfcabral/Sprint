@@ -48,8 +48,10 @@ public class Game extends ApplicationAdapter {
 		//	car.getSprite().draw(batch);
 		batch.end();
 		debugRenderer.render(world, camera.combined);		
-		world.step(1/60f, 6, 2);
+		
 		handleInput(Gdx.graphics.getDeltaTime());
+		world.step(1/60f, 6, 2);
+		
 		
 	}
 	
