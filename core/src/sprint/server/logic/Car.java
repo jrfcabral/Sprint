@@ -49,7 +49,7 @@ public class Car{
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.5f, 1f);
+		shape.setAsBox(4.5f, 2f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0f;
@@ -57,7 +57,7 @@ public class Car{
 		body.createFixture(fdef);
 		shape.dispose();
 		carSprite = new Sprite(new Texture("MLGCar.png"));
-		carSprite.setSize(10, 5);
+		carSprite.setSize(10f, 5f);
 		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
 
 		
