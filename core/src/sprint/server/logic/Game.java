@@ -43,13 +43,16 @@ public class Game extends ApplicationAdapter {
 		camManager.update(Gdx.graphics.getDeltaTime());
 		camManager.applyTo(camera);
 		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);		
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		//	car.getSprite().draw(batch);
+		car.getSprite().draw(batch);
 		batch.end();
 		debugRenderer.render(world, camera.combined);		
-		world.step(1/60f, 6, 2);
+		
 		handleInput(Gdx.graphics.getDeltaTime());
+		world.step(1/60f, 6, 2);
+		
 		
 	}
 	
@@ -79,12 +82,22 @@ public class Game extends ApplicationAdapter {
 			camManager.setPosition(camManager.getPosition().x + Settings.CAMERA_MOVE_SPEED * deltaTime, camManager.getPosition().y);
 		}
 		//Zoom
-		if(Gdx.input.isKeyPressed(Keys.PLUS)){
+		if(Gdx.input.isKeyPressed(Keys.PAGE_UP)){
 			camManager.addZoom(Settings.CAMERA_ZOOM_SPEED);
 		}
-		if(Gdx.input.isKeyPressed(Keys.MINUS)){
+		if(Gdx.input.isKeyPressed(Keys.PAGE_DOWN)){
 			camManager.addZoom(-Settings.CAMERA_ZOOM_SPEED);
 		}
+		if(Gdx.input.isKeyPressed(Keys.SPACE)){
+			if(camManager.hasTarget()){
+				camManager.setTarget(null);
+			}
+			else{
+				camManager.setTarget(car.getSprite());
+			}
+		}
+			
+			
 		
 		
 	}

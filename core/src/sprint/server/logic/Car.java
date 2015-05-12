@@ -2,6 +2,10 @@ package sprint.server.logic;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -17,6 +21,7 @@ public class Car{
 	
 
 	private Body body;
+	Sprite carSprite;
 	private float angle;
 	private float maxSteer;
 	private float topSpeed;
@@ -40,17 +45,21 @@ public class Car{
 	{	
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
-		def.position.set(new Vector2(100,100));
+		def.position.set(new Vector2(0,0));
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(20, 10);
+		shape.setAsBox(1.5f, 1f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0f;
 		fdef.friction = 1f;
 		body.createFixture(fdef);
 		shape.dispose();
+		carSprite = new Sprite(new Texture("MLGCar.png"));
+		carSprite.setSize(10, 5);
+		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
+
 		
 		maxSteer = (float) (Math.PI/120);
 		angle = (float) (3*Math.PI);
@@ -66,35 +75,37 @@ public class Car{
 		
 		switch(dir){
 		case SteerLeft:
-			if (body.getAngularVelocity() > -1.5)
+			if (body.getAngularVelocity() > -3.5)
 			body.setAngularVelocity(body.getAngularVelocity()-0.1f);
 			break;
 		case SteerRight:
-			if (body.getAngularVelocity() < 1.5)
+			if (body.getAngularVelocity() < 3.5)
 				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
 			
 			break;
 		default:
 			if (body.getAngularVelocity() > 0)
-				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()-0.1, 0));
+				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.1, 0));
 			else if (body.getAngularVelocity() < 0)
-				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1, 0));
+				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1f, 0));
 			break;
 		}
 		if (body.getLinearVelocity().isZero())
 			body.setAngularVelocity(0);
 		
-		if (brake){
-			if (!body.getLinearVelocity().isZero())
-			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()).rotate(180), true);
-			
+		if (brake){			
+			body.applyForce(new Vector2(50,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 		}
 			
 		else if (throttle){
-			body.applyForceToCenter(new Vector2(20000,0).rotate(body.getAngle()), true);
+			body.applyForce(new Vector2(50,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			
 		}
-		linearizeVelocity(0.5f);
-		System.out.println(body.getAngularVelocity());
+		
+		linearizeVelocity(0.9f);
+		
+		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
+		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
 	}
 	
 	/**
@@ -106,16 +117,19 @@ public class Car{
 		if (factor < 0 || factor > 1)
 			throw new IllegalArgumentException();
 		
+		
+		System.out.println("in"+body.getLinearVelocity());
+		Vector2 forwardDir = new Vector2(1,0);
+		forwardDir.rotate((float) Math.toDegrees(body.getAngle()));
+		Vector2 currVelocity = body.getLinearVelocity().cpy();
+		float dotprod = forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y;
+		System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
+		body.setLinearVelocity(forwardDir.x*dotprod, forwardDir.y*dotprod);
+		System.out.println("out"+body.getLinearVelocity());
 				
-		Vector2 forwardDirection = body.getWorldVector(new Vector2(0,1));
-		
-		Vector2 rightDirection = body.getWorldVector(new Vector2(1,0));		
-		Vector2 forwardVelocity = forwardDirection.scl(body.getLinearVelocity().dot(forwardDirection));
-		
-		Vector2 rightVelocity = rightDirection.scl(body.getLinearVelocity().dot(rightDirection)*factor);
-		
-		body.setLinearVelocity(forwardVelocity.x+rightVelocity.x, forwardVelocity.y+rightVelocity.y);
-		
-				
-	}	
+	}
+	
+	public Sprite getSprite(){
+		return this.carSprite;
+	}
 }
