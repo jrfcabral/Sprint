@@ -2,6 +2,10 @@ package sprint.server.logic;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -17,6 +21,7 @@ public class Car{
 	
 
 	private Body body;
+	Sprite carSprite;
 	private float angle;
 	private float maxSteer;
 	private float topSpeed;
@@ -54,6 +59,10 @@ public class Car{
 		fdef.friction = 1f;
 		body.createFixture(fdef);
 		shape.dispose();
+		carSprite = new Sprite(new Texture("MLGCar.png"));
+		carSprite.setSize(10, 5);
+		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
+
 		
 		maxSteer = (float) (Math.PI/120);
 		angle = (float) (3*Math.PI);
@@ -81,25 +90,33 @@ public class Car{
 			if (body.getAngularVelocity() > 0)
 				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.1, 0));
 			else if (body.getAngularVelocity() < 0)
-				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1, 0));
+				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1f, 0));
 			break;
 		}
 		if (body.getLinearVelocity().isZero())
 			body.setAngularVelocity(0);
+
 		if(this.getVelocity() > 0.2f)
 			body.applyForce(new Vector2(getVelocity()*1f,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 		if (brake){			
 			body.applyForce(new Vector2(100,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
+
 		}
 			
 		else if (throttle){
 			body.applyForce(new Vector2(50,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 			
 		}
+
 		if (!throttle && getVelocity() <0.5f)
 			body.setLinearVelocity(new Vector2(0,0));
 		
 		linearizeVelocity(0.85f);
+
+		
+		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
+		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
+
 	}
 	
 	/**
@@ -115,6 +132,7 @@ public class Car{
 		System.out.println("in"+body.getLinearVelocity());
 		Vector2 forwardDir = new Vector2(1,0);
 		forwardDir.rotate((float) Math.toDegrees(body.getAngle()));
+
 		Vector2 sideDir = new Vector2(1,0);
 		sideDir.rotate((float)Math.toDegrees(body.getAngle())+90f);
 		Vector2 currVelocity = body.getLinearVelocity().cpy();
@@ -122,7 +140,12 @@ public class Car{
 		float sideprod = (sideDir.x*currVelocity.x+sideDir.y*currVelocity.y)*factor;
 		System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
 		body.setLinearVelocity(forwardDir.x*dotprod+sideprod*sideDir.x, forwardDir.y*dotprod+sideprod*sideDir.y);
+
 		System.out.println("out"+body.getLinearVelocity());
 				
-	}	
+	}
+	
+	public Sprite getSprite(){
+		return this.carSprite;
+	}
 }
