@@ -74,10 +74,12 @@ public class Game extends ApplicationAdapter {
 	public void handleInput(float deltaTime){
 		boolean throttle = Gdx.input.isKeyPressed(Input.Keys.W);
 		boolean brake = Gdx.input.isKeyPressed(Input.Keys.S);
-		if (Gdx.input.isKeyPressed(Input.Keys.A))
+		if (Gdx.input.isKeyPressed(Input.Keys.D))
 			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
-		else if (Gdx.input.isKeyPressed(Input.Keys.D))
+		else if (Gdx.input.isKeyPressed(Input.Keys.A))
 			car.update(throttle,brake, Car.SteerDirection.SteerRight);
+		else if (Gdx.input.isKeyPressed(Input.Keys.N))
+			world = new World(new Vector2(0,0), true);
 		else
 			car.update(throttle,brake, Car.SteerDirection.SteerNone);
 		
