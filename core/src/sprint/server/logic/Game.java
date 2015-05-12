@@ -35,6 +35,20 @@ public class Game extends ApplicationAdapter {
 		camera.update();
 		batch = new SpriteBatch();
 		car = new Car(world);
+		BodyDef def = new BodyDef();
+		def.type = BodyDef.BodyType.StaticBody;
+		def.position.set(new Vector2(-2,-2));
+		Body body = world.createBody(def);
+		FixtureDef fixd = new FixtureDef();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(2, 2);
+		fixd.shape = shape;		
+		fixd.density = 1;
+		fixd.restitution = 1f;
+		fixd.friction = 1f;
+		body.createFixture(fixd);		
+		shape.dispose();
+		
 		camManager = new CameraManager();
 	}
 
@@ -48,8 +62,10 @@ public class Game extends ApplicationAdapter {
 		//	car.getSprite().draw(batch);
 		batch.end();
 		debugRenderer.render(world, camera.combined);		
-		world.step(1/60f, 6, 2);
+		
 		handleInput(Gdx.graphics.getDeltaTime());
+		world.step(1/60f, 6, 2);
+		
 		
 	}
 	
