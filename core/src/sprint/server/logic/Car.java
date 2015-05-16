@@ -52,7 +52,7 @@ public class Car{
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.5f, 1f);
+		shape.setAsBox(4.5f, 2.5f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0f;
@@ -129,7 +129,7 @@ public class Car{
 			throw new IllegalArgumentException();
 		
 		
-		System.out.println("in"+body.getLinearVelocity());
+		//System.out.println("in"+body.getLinearVelocity());
 		Vector2 forwardDir = new Vector2(1,0);
 		forwardDir.rotate((float) Math.toDegrees(body.getAngle()));
 
@@ -138,10 +138,10 @@ public class Car{
 		Vector2 currVelocity = body.getLinearVelocity().cpy();
 		float dotprod = forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y;
 		float sideprod = (sideDir.x*currVelocity.x+sideDir.y*currVelocity.y)*factor;
-		System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
+		//System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
 		body.setLinearVelocity(forwardDir.x*dotprod+sideprod*sideDir.x, forwardDir.y*dotprod+sideprod*sideDir.y);
 
-		System.out.println("out"+body.getLinearVelocity());
+		//System.out.println("out"+body.getLinearVelocity());
 				
 	}
 	
