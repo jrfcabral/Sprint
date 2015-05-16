@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import sprint.server.logic.*;
+import sprint.tests.Tests;
 import utils.CameraManager;
 import utils.Settings;
 
@@ -33,8 +34,10 @@ public class Game extends ApplicationAdapter {
 	Body body;
 	Car car;
 	CameraManager camManager;
-	boolean throttle;
-	boolean brake;
+	boolean testing;
+	
+	protected boolean throttle;
+	protected boolean brake;
 	@Override
 	public void create () {
 		world  = new World(new Vector2(0,0), true);
@@ -44,6 +47,7 @@ public class Game extends ApplicationAdapter {
 		camera.update();
 		batch = new SpriteBatch();
 		car = new Car(world);
+		testing = false;
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.StaticBody;
 		def.position.set(new Vector2(-2,-2));
@@ -121,6 +125,12 @@ public class Game extends ApplicationAdapter {
 	
 	
 	public void handleInput(float deltaTime){
+		if(!testing){
+			throttle = Gdx.input.isKeyPressed(Keys.W);
+		}
+		if(!testing){
+			brake = Gdx.input.isKeyPressed(Keys.S);
+		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D))
 			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
 		else if (Gdx.input.isKeyPressed(Input.Keys.A))
@@ -159,9 +169,35 @@ public class Game extends ApplicationAdapter {
 				camManager.setTarget(car.getSprite());
 			}
 		}
-			
-			
 		
+		/*Engage testing sequence*/
+		if(Gdx.input.isKeyPressed(Keys.T)){
+			testing = true;
+			Tests tests = new Tests(this);
+			tests.run();
+			System.out.print("Passed: " + tests.passed + "\nFailed: " + tests.failed + "\n");
+			testing = false;
+		}
+	}
+	
+	public boolean getThrottle(){
+		return throttle;
+	}
+	
+	public void setThrottle(boolean thrtle){
+		throttle = thrtle;
+	}
+	
+	public boolean getBrake(){
+		return brake;
+	}
+	
+	public void setBrake(boolean brk){
+		brake = brk;
+	}
+	
+	public Car getCar(){
+		return car;
 		
 	}
 	

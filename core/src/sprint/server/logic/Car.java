@@ -104,7 +104,7 @@ public class Car{
 		}
 			
 		else if (throttle){
-			body.applyForce(new Vector2(50,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			body.applyForce(new Vector2(250,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 			
 		}
 
