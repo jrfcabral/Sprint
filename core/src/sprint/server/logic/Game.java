@@ -27,6 +27,10 @@ import utils.Settings;
 
 
 public class Game extends ApplicationAdapter {
+	public static enum GameState{
+		Main, Lobby, InGame
+	}
+	GameState state;
 	SpriteBatch batch;
 	Texture img;
 	World world;
@@ -35,10 +39,17 @@ public class Game extends ApplicationAdapter {
 	Body body;
 	Car car;
 	CameraManager camManager;
-	boolean throttle;
-	boolean brake;
+	MainMenu main;
+	boolean testing;
+	
+	
+	protected boolean throttle;
+	protected boolean brake;
 	@Override
 	public void create () {
+		state = GameState.Main;
+		testing = false;
+		
 		world  = new World(new Vector2(0,0), true);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
@@ -46,19 +57,18 @@ public class Game extends ApplicationAdapter {
 		camera.update();
 		batch = new SpriteBatch();
 		car = new Car(world);
-		BodyDef def = new BodyDef();
-		def.type = BodyDef.BodyType.StaticBody;
-		def.position.set(new Vector2(-2,-2));
-		Body body = world.createBody(def);
-		FixtureDef fixd = new FixtureDef();
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(2, 2);
-		fixd.shape = shape;		
-		fixd.density = 1;
-		fixd.restitution = 1f;
-		fixd.friction = 1f;
-		body.createFixture(fixd);		
-		shape.dispose();
+		Track track = new Track(world);
+		track.addSegment(0, 0, 200, 0);
+		track.addSegment(200, 0, 200, 200);
+		track.addSegment(200, 200, 0, 200);
+		track.addSegment(0, 200, 0, 0);
+		track.addSegment(40, 40, 160, 40);
+		track.addSegment(160, 40, 160, 160);
+		track.addSegment(160, 160, 40, 160);
+		track.addSegment(40, 160, 40, 40);
+		track.apply();
+		
+		main = new MainMenu();
 		
 		camManager = new CameraManager();
 		
@@ -104,25 +114,49 @@ public class Game extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {		
-		camManager.update(Gdx.graphics.getDeltaTime());
-		camManager.applyTo(camera);
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		car.getSprite().draw(batch);
-		batch.end();
-		debugRenderer.render(world, camera.combined);		
-		
-		handleInput(Gdx.graphics.getDeltaTime());
-		world.step(1/60f, 6, 2);
-		
-		
+	public void render () {	
+		if(state == GameState.Main){
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			main.draw(batch);
+			if(main.startServer.isPressed()){
+				System.out.println("It's pressed");
+				state = GameState.InGame;
+			}
+		}
+		else if(state == GameState.Lobby){
+			;
+		}
+		else if(state == GameState.InGame){
+			drawGame(Gdx.graphics.getDeltaTime());
+		}
+	}
+	
+	public void drawGame(float deltaTime){
+		if(!testing){
+			camManager.update(Gdx.graphics.getDeltaTime());
+			camManager.applyTo(camera);
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			batch.setProjectionMatrix(camera.combined);
+			batch.begin();
+			car.getSprite().draw(batch);
+			batch.end();
+			debugRenderer.render(world, camera.combined);		
+			
+			handleInput(Gdx.graphics.getDeltaTime());
+			world.step(1/60f, 6, 2);
+		}
 	}
 	
 	
 	public void handleInput(float deltaTime){
+		if(!testing){
+			throttle = Gdx.input.isKeyPressed(Keys.W);
+		}
+		if(!testing){
+			brake = Gdx.input.isKeyPressed(Keys.S);
+		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D))
 			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
 		else if (Gdx.input.isKeyPressed(Input.Keys.A))
@@ -161,9 +195,34 @@ public class Game extends ApplicationAdapter {
 				camManager.setTarget(car.getSprite());
 			}
 		}
-			
-			
 		
+		/*Engage testing sequence*/
+		if(Gdx.input.isKeyPressed(Keys.T)){
+			testing = true;
+			Tests tests = new Tests(this);
+			tests.run();
+			testing = false;
+		}
+	}
+	
+	public boolean getThrottle(){
+		return throttle;
+	}
+	
+	public void setThrottle(boolean thrtle){
+		throttle = thrtle;
+	}
+	
+	public boolean getBrake(){
+		return brake;
+	}
+	
+	public void setBrake(boolean brk){
+		brake = brk;
+	}
+	
+	public Car getCar(){
+		return car;
 		
 	}
 	
