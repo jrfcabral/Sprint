@@ -148,4 +148,8 @@ public class Car{
 	public Sprite getSprite(){
 		return this.carSprite;
 	}
+	
+	public void setVelocity(float vel){
+		body.setLinearVelocity(vel, 0);
+	}
 }

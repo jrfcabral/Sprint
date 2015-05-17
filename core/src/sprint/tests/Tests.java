@@ -28,18 +28,43 @@ public class Tests {
 		else{
 			failed++;
 		}
+		
+		if(testBrake()){
+			passed++;
+		}
+		else{
+			failed++;
+		}
+		
+		System.out.print("Passed: " + passed + "\nFailed: " + failed + "\n");
 	}
 	
-	public boolean testAccelerate(){
-		float oldVel = car.getVelocity();
+	private boolean testAccelerate(){
+		car.setVelocity(0);
+		car.setAngle(0);
 		game.setThrottle(true);
-		if(car.getVelocity() < oldVel){
+		game.setBrake(false);
+		car.update(game.getThrottle(), game.getBrake(), Car.SteerDirection.SteerNone);
+		if(car.getVelocity() <= 0){
 			return false;
 		}
 		else{
 			return true;
 		}
 		
+	}
+	
+	private boolean testBrake(){
+		car.setVelocity(30);
+		car.setAngle(90);
+		game.setBrake(true);
+		game.setThrottle(false);
+		car.update(game.getThrottle(), game.getBrake(), Car.SteerDirection.SteerNone);
+		if(car.getVelocity() >= 30){
+			return false;
+		}
+		
+		return true;
 	}
 	
 }

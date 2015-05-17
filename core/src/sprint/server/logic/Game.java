@@ -26,6 +26,10 @@ import utils.Settings;
 
 
 public class Game extends ApplicationAdapter {
+	public static enum GameState{
+		Main, Lobby, InGame
+	}
+	GameState state;
 	SpriteBatch batch;
 	Texture img;
 	World world;
@@ -34,12 +38,16 @@ public class Game extends ApplicationAdapter {
 	Body body;
 	Car car;
 	CameraManager camManager;
+	MainMenu main;
 	boolean testing;
+	
 	
 	protected boolean throttle;
 	protected boolean brake;
 	@Override
 	public void create () {
+		state = GameState.Main;
+		
 		world  = new World(new Vector2(0,0), true);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
@@ -61,6 +69,7 @@ public class Game extends ApplicationAdapter {
 		fixd.friction = 1f;
 		body.createFixture(fixd);		
 		shape.dispose();
+		main = new MainMenu();
 		
 		camManager = new CameraManager();
 		
@@ -106,21 +115,39 @@ public class Game extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {		
-		camManager.update(Gdx.graphics.getDeltaTime());
-		camManager.applyTo(camera);
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		car.getSprite().draw(batch);
-		batch.end();
-		debugRenderer.render(world, camera.combined);		
-		
-		handleInput(Gdx.graphics.getDeltaTime());
-		world.step(1/60f, 6, 2);
-		
-		
+	public void render () {	
+		if(state == GameState.Main){
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			main.draw(batch);
+			if(main.startServer.isPressed()){
+				System.out.println("It's pressed");
+				state = GameState.InGame;
+			}
+		}
+		else if(state == GameState.Lobby){
+			;
+		}
+		else if(state == GameState.InGame){
+			drawGame(Gdx.graphics.getDeltaTime());
+		}
+	}
+	
+	public void drawGame(float deltaTime){
+		if(!testing){
+			camManager.update(Gdx.graphics.getDeltaTime());
+			camManager.applyTo(camera);
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			batch.setProjectionMatrix(camera.combined);
+			batch.begin();
+			car.getSprite().draw(batch);
+			batch.end();
+			debugRenderer.render(world, camera.combined);		
+			
+			handleInput(Gdx.graphics.getDeltaTime());
+			world.step(1/60f, 6, 2);
+		}
 	}
 	
 	
@@ -175,7 +202,6 @@ public class Game extends ApplicationAdapter {
 			testing = true;
 			Tests tests = new Tests(this);
 			tests.run();
-			System.out.print("Passed: " + tests.passed + "\nFailed: " + tests.failed + "\n");
 			testing = false;
 		}
 	}
