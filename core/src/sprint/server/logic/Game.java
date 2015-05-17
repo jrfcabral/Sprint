@@ -47,6 +47,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		state = GameState.Main;
+		testing = false;
 		
 		world  = new World(new Vector2(0,0), true);
 		debugRenderer = new Box2DDebugRenderer();
@@ -55,20 +56,17 @@ public class Game extends ApplicationAdapter {
 		camera.update();
 		batch = new SpriteBatch();
 		car = new Car(world);
-		testing = false;
-		BodyDef def = new BodyDef();
-		def.type = BodyDef.BodyType.StaticBody;
-		def.position.set(new Vector2(-2,-2));
-		Body body = world.createBody(def);
-		FixtureDef fixd = new FixtureDef();
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(2, 2);
-		fixd.shape = shape;		
-		fixd.density = 1;
-		fixd.restitution = 1f;
-		fixd.friction = 1f;
-		body.createFixture(fixd);		
-		shape.dispose();
+		Track track = new Track(world);
+		track.addSegment(0, 0, 200, 0);
+		track.addSegment(200, 0, 200, 200);
+		track.addSegment(200, 200, 0, 200);
+		track.addSegment(0, 200, 0, 0);
+		track.addSegment(40, 40, 160, 40);
+		track.addSegment(160, 40, 160, 160);
+		track.addSegment(160, 160, 40, 160);
+		track.addSegment(40, 160, 40, 40);
+		track.apply();
+		
 		main = new MainMenu();
 		
 		camManager = new CameraManager();

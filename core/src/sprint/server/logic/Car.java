@@ -48,14 +48,14 @@ public class Car{
 	{	
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
-		def.position.set(new Vector2(0,0));
+		def.position.set(new Vector2(200,200));
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(4.5f, 2.5f);
 		fdef.shape = shape;
 		fdef.density = 1f;
-		fdef.restitution = 0f;
+		fdef.restitution = 0.1f;
 		fdef.friction = 1f;
 		body.createFixture(fdef);
 		shape.dispose();
@@ -78,19 +78,19 @@ public class Car{
 		
 		switch(dir){
 		case SteerLeft:
-			if (body.getAngularVelocity() > -3.5)
+			if (body.getAngularVelocity() > -2.5)
 			body.setAngularVelocity(body.getAngularVelocity()-0.1f);
 			break;
 		case SteerRight:
-			if (body.getAngularVelocity() < 3.5)
+			if (body.getAngularVelocity() < 2.5)
 				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
 			
 			break;
 		default:
 			if (body.getAngularVelocity() > 0)
-				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.1, 0));
+				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.2, 0));
 			else if (body.getAngularVelocity() < 0)
-				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1f, 0));
+				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.2f, 0));
 			break;
 		}
 		if (body.getLinearVelocity().isZero())
@@ -99,20 +99,22 @@ public class Car{
 		if(this.getVelocity() > 0.2f)
 			body.applyForce(new Vector2(getVelocity()*1f,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 		if (brake){			
-			body.applyForce(new Vector2(100,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
+			body.applyForce(new Vector2(1050,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 
 		}
 			
 		else if (throttle){
-			body.applyForce(new Vector2(250,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
-			
+			if(this.getVelocity() < 100f)
+				body.applyForce(new Vector2(650,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			if(this.getVelocity() < 50f)
+				body.applyForce(new Vector2(650,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 		}
 
 		if (!throttle && getVelocity() <0.5f)
 			body.setLinearVelocity(new Vector2(0,0));
 		
-		linearizeVelocity(0.85f);
-
+		linearizeVelocity(0.55f);
+		System.out.println(this.getVelocity());
 		
 		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
 		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
