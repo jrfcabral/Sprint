@@ -1,9 +1,5 @@
 package sprint.server.logic;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -75,7 +71,7 @@ public class Car{
 	 */
 	public void update (boolean throttle,boolean brake, SteerDirection dir)
 	{
-		
+		//rotate car according to input
 		switch(dir){
 		case SteerLeft:
 			if (body.getAngularVelocity() > -3.5)
@@ -86,6 +82,7 @@ public class Car{
 				body.setAngularVelocity(body.getAngularVelocity()+0.1f);
 			
 			break;
+		//if no input is given, "slowly" reduce rotational speed
 		default:
 			if (body.getAngularVelocity() > 0)
 				body.setAngularVelocity((float) Math.max(body.getAngularVelocity()-0.1, 0));
@@ -93,27 +90,35 @@ public class Car{
 				body.setAngularVelocity((float) Math.min(body.getAngularVelocity()+0.1f, 0));
 			break;
 		}
+		//can't rotate a resting vehicle
 		if (body.getLinearVelocity().isZero())
 			body.setAngularVelocity(0);
-
+		
+		//apply some simulated friction
 		if(this.getVelocity() > 0.2f)
 			body.applyForce(new Vector2(getVelocity()*1f,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
+		
+		//process braking
 		if (brake){			
 			body.applyForce(new Vector2(100,0).rotate((float) Math.toDegrees(body.getAngle())+180f), body.getWorldCenter(), true);
 
 		}
-			
+		
+		//process acceleration
 		else if (throttle){
 			body.applyForce(new Vector2(50,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 			
 		}
-
+		
+		//if the car is moving very slowly and not trying to accelerate, stop it - allows friction to bring the car to a halt
 		if (!throttle && getVelocity() <0.5f)
 			body.setLinearVelocity(new Vector2(0,0));
 		
+		//kill some of the sideways velocity of the car - simulates the effect wheels have on steering
+		//prevents the car from completely gliding when turning
 		linearizeVelocity(0.85f);
 
-		
+		//update the sprite position
 		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
 		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
 
