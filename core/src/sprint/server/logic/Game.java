@@ -1,8 +1,11 @@
 package sprint.server.logic;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -12,9 +15,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.Socket;
+//import com.badlogic.gdx.net.ServerSocket;
+//import com.badlogic.gdx.net.ServerSocketHints;
+//import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -40,6 +43,7 @@ public class Game extends ApplicationAdapter {
 	CameraManager camManager;
 	MainMenu main;
 	boolean testing;
+	boolean server;
 	
 	
 	protected boolean throttle;
@@ -47,8 +51,12 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		state = GameState.Main;
+
 		testing = false;
 		
+
+		server = false;
+
 		world  = new World(new Vector2(0,0), true);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
@@ -70,46 +78,6 @@ public class Game extends ApplicationAdapter {
 		main = new MainMenu();
 		
 		camManager = new CameraManager();
-		
-		
-		new Thread(new Runnable(){
-	        @Override
-	        public void run() {
-	        	System.out.println("Thread is running");
-	            ServerSocketHints serverSocketHint = new ServerSocketHints();
-	            // 0 means no timeout.  Probably not the greatest idea in production!
-	            serverSocketHint.acceptTimeout = 0;
-	           
-	            ServerSocket serverSocket = Gdx.net.newServerSocket(null, 8888, serverSocketHint);
-	            
-	            // Loop forever
-	            while(true){
-	                // Create a socket
-	                Socket socket = serverSocket.accept(null);
-	                
-	                // Read data from the socket into a BufferedReader
-	                BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
-	                
-	                try {
-	                	String command = buffer.readLine();
-	                	System.out.println(command);
-	                	if(command.equals("Accelerate"))
-	                		throttle = true;
-	                	else if(command.equals("Nop")){
-	                		throttle = false;
-	                		brake = false;
-	                	}
-	                	else if(command.equals("Travate"))
-	                		brake = true;
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
-	        
-	    }).start();
-		
-		
 	}
 
 	@Override
@@ -117,10 +85,12 @@ public class Game extends ApplicationAdapter {
 		if(state == GameState.Main){
 			Gdx.gl.glClearColor(1, 1, 1, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			main.draw(batch);
+			main.draw();
 			if(main.startServer.isPressed()){
-				System.out.println("It's pressed");
 				state = GameState.InGame;
+				if(!server){
+					launchServer();
+				}
 			}
 		}
 		else if(state == GameState.Lobby){
@@ -148,14 +118,86 @@ public class Game extends ApplicationAdapter {
 		}
 	}
 	
+	public void launchServer(){
+		new Thread(new Runnable(){
+	        @Override
+	        public void run() {
+	        	System.out.println("Thread is running");
+	           // ServerSocketHints serverSocketHint = new ServerSocketHints();
+	            // 0 means no timeout.  Probably not the greatest idea in production!
+	            //serverSocketHint.acceptTimeout = 2000;
+	        	ServerSocket serverSocket = null;
+	            try {
+					serverSocket = new ServerSocket(8888);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}//Gdx.net.newServerSocket(null, 8888, serverSocketHint);
+	            
+	            while(true){
+	                // Create a socket
+	                Socket socket = null;
+	                DataOutputStream out = null;
+	                
+	                // Read data from the socket into a BufferedReader
+	               
+	                
+	                try {
+	                	socket = serverSocket.accept();
+	                	BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	                	out = new DataOutputStream(socket.getOutputStream());
+	                	String command = buffer.readLine();
+	                	System.out.println(command);
+	                	if(command.equals("Accelerate"))
+	                		throttle = true;
+	                	else if(command.equals("Nop")){
+	                		throttle = false;
+	                		brake = false;
+	                	}
+	                	else if(command.equals("Travate"))
+	                		brake = true;
+	                	else if(command.equals("Test")){
+	                		out.write("Received\n".getBytes());
+	                	}
+	                }
+	                catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	                finally{
+	    				if(socket != null){
+	    					try{
+	    						socket.close();
+	    					}
+	    					catch(IOException e){
+	    						e.printStackTrace();
+	    					}
+	    					
+	    				}
+	    				
+	    				if(out != null){
+	    					try{
+	    						out.close();
+	    					}
+	    					catch(IOException e){
+	    						e.printStackTrace();
+	    					}
+	    				}
+	    			}
+	            }
+	        }
+	        
+	    }).start();
+		server = true;
+	}
+	
 	
 	public void handleInput(float deltaTime){
-		if(!testing){
+		/*if(!testing){
 			throttle = Gdx.input.isKeyPressed(Keys.W);
 		}
 		if(!testing){
 			brake = Gdx.input.isKeyPressed(Keys.S);
-		}
+		}*/
 		if (Gdx.input.isKeyPressed(Input.Keys.D))
 			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
 		else if (Gdx.input.isKeyPressed(Input.Keys.A))
