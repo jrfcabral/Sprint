@@ -19,16 +19,27 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class AndroidSprint extends ApplicationAdapter {
+	public static enum ControllerState{
+		Main, Connect, Game;
+	}
 	SpriteBatch batch;
 	Texture img;
 	TextButton accel, brake;
 	Skin skin;
 	Stage stage;
 	Socket socket;
+	ControllerState st;
+	MainMenu main;
+	ConnectMenu connect;
 	int state;
 	
 	@Override
 	public void create () {
+		st = ControllerState.Main;
+		main = new MainMenu();
+		connect = new ConnectMenu();
+		
+		
 		batch = new SpriteBatch();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		stage = new Stage();
@@ -42,6 +53,7 @@ public class AndroidSprint extends ApplicationAdapter {
 		
 		
 		state = 1;
+		
 		  accel.addListener(new ClickListener(-1){
 	            @Override 
 	            public void clicked(InputEvent event, float x, float y){
@@ -59,20 +71,37 @@ public class AndroidSprint extends ApplicationAdapter {
 		stage.addActor(brake);
 		stage.addActor(accel);
 		
-		Gdx.input.setInputProcessor(stage);
+		//Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		update(socket, brake, accel);
-		batch.begin();
+		if(st == ControllerState.Main){
+			main.draw(batch);
+			if(main.enter.isPressed()){
+				st = ControllerState.Connect;
+				Gdx.input.setInputProcessor(connect.connectMenu);
+			}
+		}
+		else if(st == ControllerState.Connect){
+			connect.draw();
+			if(connect.getAck()){ //TIS BROKEN
+				st = ControllerState.Game;
+				Gdx.input.setInputProcessor(stage);
+			}
+			if(connect.back.isPressed()){
+				st = ControllerState.Main;
+			}
+		}
+		else if(st == ControllerState.Game){
+			update(brake, accel);
 			stage.draw();
-		batch.end();
+		}
 	}
 	
-	public void update(Socket sock, TextButton br, TextButton acc){
+	public void update(TextButton br, TextButton acc){
 		if(acc.isPressed()){
 			setState(0);
 		}
