@@ -15,7 +15,7 @@ public class MainMenu {
 	Skin skin;
 	TextButton startServer;
 	TextButton exit;
-	public Sprite logo;
+	Sprite logo;
 	
 	public MainMenu(){
 		mainMenu = new Stage();
@@ -48,7 +48,7 @@ public class MainMenu {
 		
 	}
 	
-	public void draw(SpriteBatch batch){
+	public void draw(){
 		mainMenu.getBatch().begin();
 		logo.draw(mainMenu.getBatch());
 		mainMenu.getBatch().end();
