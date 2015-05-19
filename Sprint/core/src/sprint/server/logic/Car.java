@@ -48,7 +48,7 @@ public class Car{
 	{	
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
-		def.position.set(new Vector2(200,200));
+		def.position.set(new Vector2(20,150));
 		body = world.createBody(def);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
@@ -114,7 +114,7 @@ public class Car{
 			body.setLinearVelocity(new Vector2(0,0));
 		
 		linearizeVelocity(0.55f);
-		System.out.println(this.getVelocity());
+		//System.out.println(this.getVelocity());
 		
 		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
 		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
@@ -152,6 +152,6 @@ public class Car{
 	}
 	
 	public void setVelocity(float vel){
-		body.setLinearVelocity(vel, 0);
+		body.setLinearVelocity(vel*((float)Math.cos(getAngle())), vel*((float)Math.sin(getAngle())));
 	}
 }

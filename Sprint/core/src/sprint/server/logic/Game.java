@@ -48,6 +48,8 @@ public class Game extends ApplicationAdapter {
 	
 	protected boolean throttle;
 	protected boolean brake;
+	protected Car.SteerDirection steerDir;
+	
 	@Override
 	public void create () {
 		state = GameState.Main;
@@ -57,6 +59,8 @@ public class Game extends ApplicationAdapter {
 
 		server = false;
 
+		steerDir = Car.SteerDirection.SteerNone;
+		
 		world  = new World(new Vector2(0,0), true);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
@@ -123,24 +127,19 @@ public class Game extends ApplicationAdapter {
 	        @Override
 	        public void run() {
 	        	System.out.println("Thread is running");
-	           // ServerSocketHints serverSocketHint = new ServerSocketHints();
-	            // 0 means no timeout.  Probably not the greatest idea in production!
-	            //serverSocketHint.acceptTimeout = 2000;
+	          
 	        	ServerSocket serverSocket = null;
 	            try {
 					serverSocket = new ServerSocket(8888);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}//Gdx.net.newServerSocket(null, 8888, serverSocketHint);
+				}
 	            
 	            while(true){
 	                // Create a socket
 	                Socket socket = null;
 	                DataOutputStream out = null;
-	                
-	                // Read data from the socket into a BufferedReader
-	               
 	                
 	                try {
 	                	socket = serverSocket.accept();
@@ -158,6 +157,15 @@ public class Game extends ApplicationAdapter {
 	                		brake = true;
 	                	else if(command.equals("Test")){
 	                		out.write("Received\n".getBytes());
+	                	}
+	                	else if(command.equals("Left")){
+	                		steerDir = Car.SteerDirection.SteerRight;
+	                	}
+	                	else if(command.equals("Right")){
+	                		steerDir = Car.SteerDirection.SteerLeft;
+	                	}
+	                	else if(command.equals("NoSteer")){
+	                		steerDir = Car.SteerDirection.SteerNone;
 	                	}
 	                }
 	                catch (IOException e) {
@@ -192,7 +200,7 @@ public class Game extends ApplicationAdapter {
 	
 	
 	public void handleInput(float deltaTime){
-		if(!testing){
+		/*if(!testing){
 			throttle = Gdx.input.isKeyPressed(Keys.W);
 		}
 		if(!testing){
@@ -205,7 +213,9 @@ public class Game extends ApplicationAdapter {
 		else if (Gdx.input.isKeyPressed(Input.Keys.N))
 			world = new World(new Vector2(0,0), true);
 		else
-			car.update(throttle,brake, Car.SteerDirection.SteerNone);
+			car.update(throttle,brake, Car.SteerDirection.SteerNone);*/
+		
+		car.update(throttle,brake, steerDir);
 		
 		//Camera controls
 		//Movement

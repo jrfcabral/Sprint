@@ -32,16 +32,16 @@ public class ConnectMenu {
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
 		ip = new TextArea("Server Ip", skin);
-		ip.setSize(300.0f, 30.0f);
-		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight() - 10.0f);
+		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
+		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*2.0f);
 		
 		port = new TextArea("Port", skin);
-		port.setSize(300.0f, 30.0f);
-		port.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, ip.getY() - port.getHeight() - 10.0f);
+		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
+		port.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, ip.getY() - port.getHeight()*1.2f);
 		
 		connect = new TextButton("Connect", skin);
-		connect.setSize(100.0f, 50.0f);
-		connect.setPosition(port.getX(), port.getY() - connect.getHeight() - 20.0f);
+		connect.setSize(ip.getWidth()*0.3f, ip.getHeight()*1.3f);
+		connect.setPosition(port.getX(), port.getY() - connect.getHeight()*1.4f);
 		connect.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event , float x, float y){
@@ -87,8 +87,8 @@ public class ConnectMenu {
 		
 		
 		back = new TextButton("Back", skin);
-		back.setSize(100.0f,  50.0f);
-		back.setPosition(connect.getX() + connect.getWidth() + 20.0f, connect.getY());
+		back.setSize(ip.getWidth()*0.3f, ip.getHeight()*1.3f);
+		back.setPosition(connect.getX() + connect.getWidth() + connect.getHeight()*1.4f, connect.getY());
 		
 		connectMenu.addActor(ip);
 		connectMenu.addActor(port);

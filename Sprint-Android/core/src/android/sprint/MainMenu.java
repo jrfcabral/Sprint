@@ -24,13 +24,14 @@ public class MainMenu {
 		exit = new TextButton("Exit", skin);
 		logo = new Sprite(new Texture("SuperSprintlogo.png"));
 		
-		enter.setSize(280.0f, 40.0f);
-		enter.setPosition(Gdx.graphics.getWidth()/2.0f - enter.getWidth()/2.0f, Gdx.graphics.getHeight()-250.0f);
+		logo.setSize(Gdx.graphics.getWidth()*0.8f, Gdx.graphics.getHeight()*0.3f);
+		logo.setPosition(Gdx.graphics.getWidth()/2.0f - logo.getWidth()/2.0f, Gdx.graphics.getHeight() - 30.0f - logo.getHeight());
 		
+		enter.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
+		enter.setPosition(Gdx.graphics.getWidth()/2.0f - enter.getWidth()/2.0f, Gdx.graphics.getHeight()- logo.getHeight()*2.0f);
 		
-		
-		exit.setSize(280.0f, 40.0f);
-		exit.setPosition(Gdx.graphics.getWidth()/2.0f - exit.getWidth()/2.0f, enter.getY() - 100.0f);
+		exit.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
+		exit.setPosition(Gdx.graphics.getWidth()/2.0f - exit.getWidth()/2.0f, enter.getY() - enter.getHeight()*2.0f);
 		exit.addListener(new ClickListener(-1){
 			@Override
 			public void clicked(InputEvent event , float x, float y){
@@ -38,8 +39,7 @@ public class MainMenu {
 			}
 		});
 		
-		logo.setSize(840.0f, 400.0f);
-		logo.setPosition(Gdx.graphics.getWidth()/2.0f - logo.getWidth()/2.0f, Gdx.graphics.getHeight() - 30.0f - logo.getHeight());
+		
 		
 		mainMenu.addActor(enter);
 		mainMenu.addActor(exit);

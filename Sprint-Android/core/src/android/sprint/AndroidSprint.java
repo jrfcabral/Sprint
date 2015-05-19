@@ -24,7 +24,7 @@ public class AndroidSprint extends ApplicationAdapter {
 	}
 	SpriteBatch batch;
 	Texture img;
-	TextButton accel, brake;
+	TextButton accel, brake, left, right;
 	Skin skin;
 	Stage stage;
 	Socket socket;
@@ -32,6 +32,7 @@ public class AndroidSprint extends ApplicationAdapter {
 	MainMenu main;
 	ConnectMenu connect;
 	int state;
+	int stateSteer;
 	
 	@Override
 	public void create () {
@@ -39,37 +40,35 @@ public class AndroidSprint extends ApplicationAdapter {
 		main = new MainMenu();
 		connect = new ConnectMenu();
 		
-		
 		batch = new SpriteBatch();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		stage = new Stage();
+		
+		left = new TextButton("<", skin);
+		left.setSize(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.2f);
+		left.setPosition(0,  0);
+		
+		right = new TextButton(">", skin);
+		right.setSize(left.getWidth(), left.getHeight());
+		right.setPosition(left.getWidth()*1.1f, 0);
+		
 		brake = new TextButton("Brake", skin);
-		brake.setSize(80.0f, 80.0f);
+		brake.setSize(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.2f);
 		brake.setPosition(Gdx.graphics.getWidth()-brake.getWidth(), 0);
 		
 		accel = new TextButton("Accelerate", skin);
-		accel.setSize(120f, 80f);
-		accel.setPosition(0,  0);
+		accel.setSize(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.2f);
+		accel.setPosition(brake.getX(),  brake.getHeight()*1.1f);
 		
 		
 		state = 1;
+		stateSteer = 3;
 		
-		  accel.addListener(new ClickListener(-1){
-	            @Override 
-	            public void clicked(InputEvent event, float x, float y){
-	            	setState(0);
-	            }
-	        });
-		  
-		  brake.addListener(new ClickListener(-1){
-	            @Override 
-	            public void clicked(InputEvent event, float x, float y){
-	            	setState(2);
-	            }
-	        });
 		
 		stage.addActor(brake);
 		stage.addActor(accel);
+		stage.addActor(left);
+		stage.addActor(right);
 		
 		//Gdx.input.setInputProcessor(stage);
 	}
@@ -81,110 +80,101 @@ public class AndroidSprint extends ApplicationAdapter {
 		if(st == ControllerState.Main){
 			main.draw(batch);
 			if(main.enter.isPressed()){
-				st = ControllerState.Connect;
+				st = ControllerState.Connect; 						//FOR DEMONSTRATION PURPOSES
 				Gdx.input.setInputProcessor(connect.connectMenu);
 			}
 		}
 		else if(st == ControllerState.Connect){
 			connect.draw();
-			if(connect.getAck()){ //TIS BROKEN
+			if(connect.connect.isPressed()){//connect.getAck()){ //TIS BROKEN
 				st = ControllerState.Game;
 				Gdx.input.setInputProcessor(stage);
 			}
 			if(connect.back.isPressed()){
 				st = ControllerState.Main;
+				
 			}
 		}
 		else if(st == ControllerState.Game){
-			update(brake, accel);
+			update(brake, accel, left, right);
 			stage.draw();
 		}
 	}
 	
-	public void update(TextButton br, TextButton acc){
+	public void update(TextButton br, TextButton acc, TextButton lft, TextButton rgt){
 		if(acc.isPressed()){
-			setState(0);
+			setState(0, stateSteer);
 		}
 		if(br.isPressed()){
-			setState(2);
+			setState(2, stateSteer);
 		}
 		if(!acc.isPressed() && !br.isPressed()){
-			setState(1);
+			setState(1, stateSteer);
+		}
+		if(!lft.isPressed() && !rgt.isPressed()){
+			setState(state, 3);
+		}
+		if(lft.isPressed()){
+			setState(state, 4);
+		}
+		if(rgt.isPressed()){
+			setState(state, 5);
 		}
 	}
 	
-	public void setState(int st){
-		if(state == st)
+	public void setState(int st, int stst){
+		if(state == st && stateSteer == stst)
 			return;
 		else{
-			state = st;
-			if(state == 1){
-				try {
-					socket = new Socket("192.168.1.6", 8888);
-					socket.getOutputStream().write("Nop".getBytes());
-				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+			if(state != st){
+				state = st;
+				if(state == 1){
+					sendMessage("Nop");
 				}
-				finally{
-	                if(socket != null){
-	                    try{
-	                        socket.close();
-	                    }
-	                    catch(IOException e){
-	                        e.printStackTrace();
-	                    }
-	                }
+				else if(state == 0){
+					sendMessage("Accelerate");
+				}
+				else if(state == 2){
+					sendMessage("Travate");
 				}
 			}
-			else if(state == 0){
-				try {
-					socket = new Socket("192.168.1.6", 8888);
-					socket.getOutputStream().write("Accelerate".getBytes());
-				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+			if(stateSteer != stst){
+				stateSteer = stst;
+				if(stateSteer == 3){
+					
+					sendMessage("NoSteer");
 				}
-				finally{
-	                if(socket != null){
-	                    try{
-	                        socket.close();
-	                    }
-	                    catch(IOException e){
-	                        e.printStackTrace();
-	                    }
-	                }
+				else if(stateSteer == 4){
+				
+					sendMessage("Left");
 				}
-			}
-			else if(state == 2){
-				try {
-					socket = new Socket("192.168.1.6", 8888);
-					socket.getOutputStream().write("Travate".getBytes());
-				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				finally{
-	                if(socket != null){
-	                    try{
-	                        socket.close();
-	                    }
-	                    catch(IOException e){
-	                        e.printStackTrace();
-	                    }
-	                }
+				else if(stateSteer == 5){
+					
+					sendMessage("Right");
 				}
 			}
 		}
 	}
-	
+	private void sendMessage(String msg){
+		try {
+			socket = new Socket(connect.getIp(), connect.getPort());
+			socket.getOutputStream().write(msg.getBytes());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally{
+            if(socket != null){
+                try{
+                    socket.close();
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+		}
+	}
 }
