@@ -44,6 +44,7 @@ public class Game extends ApplicationAdapter {
 	MainMenu main;
 	boolean testing;
 	boolean server;
+	boolean pcControls;
 	
 	
 	protected boolean throttle;
@@ -53,12 +54,13 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		state = GameState.Main;
-
+		
 		testing = false;
 		
-
+		
 		server = false;
 
+		pcControls = true;
 		steerDir = Car.SteerDirection.SteerNone;
 		
 		world  = new World(new Vector2(0,0), true);
@@ -146,7 +148,9 @@ public class Game extends ApplicationAdapter {
 	                	BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	                	out = new DataOutputStream(socket.getOutputStream());
 	                	String command = buffer.readLine();
+	                	System.out.println("From ip " + socket.getInetAddress() + ":");
 	                	System.out.println(command);
+	                	pcControls = false;
 	                	if(command.equals("Accelerate"))
 	                		throttle = true;
 	                	else if(command.equals("Nop")){
@@ -200,22 +204,29 @@ public class Game extends ApplicationAdapter {
 	
 	
 	public void handleInput(float deltaTime){
-		/*if(!testing){
-			throttle = Gdx.input.isKeyPressed(Keys.W);
+		if(pcControls){
+			if(!testing){
+				throttle = Gdx.input.isKeyPressed(Keys.W);
+			
+				brake = Gdx.input.isKeyPressed(Keys.S);
+				
+				if (Gdx.input.isKeyPressed(Input.Keys.D))
+					car.update(throttle,brake, Car.SteerDirection.SteerLeft);
+				else if (Gdx.input.isKeyPressed(Input.Keys.A))
+					car.update(throttle,brake, Car.SteerDirection.SteerRight);
+				else if (Gdx.input.isKeyPressed(Input.Keys.N))
+					world = new World(new Vector2(0,0), true);
+				else
+					car.update(throttle,brake, Car.SteerDirection.SteerNone);
+			}
 		}
-		if(!testing){
-			brake = Gdx.input.isKeyPressed(Keys.S);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D))
-			car.update(throttle,brake, Car.SteerDirection.SteerLeft);
-		else if (Gdx.input.isKeyPressed(Input.Keys.A))
-			car.update(throttle,brake, Car.SteerDirection.SteerRight);
-		else if (Gdx.input.isKeyPressed(Input.Keys.N))
-			world = new World(new Vector2(0,0), true);
 		else
-			car.update(throttle,brake, Car.SteerDirection.SteerNone);*/
+			car.update(throttle,brake, steerDir);
 		
-		car.update(throttle,brake, steerDir);
+		if(Gdx.input.isKeyPressed(Keys.C)){
+			pcControls = true;
+		}
+		
 		
 		//Camera controls
 		//Movement
@@ -275,6 +286,10 @@ public class Game extends ApplicationAdapter {
 	public Car getCar(){
 		return car;
 		
+	}
+	
+	public World getWorld(){
+		return world;
 	}
 	
 	public static void main(){

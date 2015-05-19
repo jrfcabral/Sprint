@@ -34,7 +34,7 @@ public class Car{
 	 * @return the angle
 	 */
 	public float getAngle() {
-		return angle;
+		return body.getAngle();
 	}
 
 	/**
@@ -115,6 +115,7 @@ public class Car{
 		
 		linearizeVelocity(0.55f);
 		//System.out.println(this.getVelocity());
+		//System.out.println(getAngle());
 		
 		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
 		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
