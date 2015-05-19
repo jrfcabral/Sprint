@@ -161,6 +161,7 @@ public class Game extends ApplicationAdapter {
 	                		brake = true;
 	                	else if(command.equals("Test")){
 	                		out.write("Received\n".getBytes());
+	                		out.flush();
 	                	}
 	                	else if(command.equals("Left")){
 	                		steerDir = Car.SteerDirection.SteerRight;

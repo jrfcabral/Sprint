@@ -24,6 +24,7 @@ public class ConnectMenu {
 	Skin skin;
 	Socket testSocket;
 	DataInputStream dis;
+	BufferedReader reader;
 	boolean ack;
 	
 	public ConnectMenu(){
@@ -39,7 +40,7 @@ public class ConnectMenu {
 		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
 		port.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, ip.getY() - port.getHeight()*1.2f);
 		
-		connect = new TextButton("Connect", skin);
+		connect = new TextButton("Connect", skin);		
 		connect.setSize(ip.getWidth()*0.3f, ip.getHeight()*1.3f);
 		connect.setPosition(port.getX(), port.getY() - connect.getHeight()*1.4f);
 		connect.addListener(new ClickListener(){
@@ -47,10 +48,11 @@ public class ConnectMenu {
 			public void clicked(InputEvent event , float x, float y){
 				try {
 					testSocket = new Socket(getIp(), getPort());
-					 BufferedReader reader = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
-					testSocket.getOutputStream().write("Test".getBytes());
+					reader = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
+					String test = "Test\n";
+					testSocket.getOutputStream().write(test.getBytes());
+					testSocket.getOutputStream().flush();
 					
-					//String response = reader.readLine();
 					//System.out.println(response);
 					
 					 /*if(response.equals("Received")){
@@ -63,6 +65,18 @@ public class ConnectMenu {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				try{										
+					System.out.println(testSocket.getInputStream().available());
+					String response = reader.readLine();
+					System.out.println(response);
+					if(response.equals("Received")){
+						 ack = true;
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				finally{
 	                if(testSocket != null){
 	                    try{
@@ -73,14 +87,14 @@ public class ConnectMenu {
 	                    }
 	                }
 	                
-	                if(dis != null){
+	                /*if(dis != null){
 	                	try{
 	                        dis.close();
 	                    }
 	                    catch(IOException e){
 	                        e.printStackTrace();
 	                    }
-	                }
+	                }*/
 				}
 			}
 		});
