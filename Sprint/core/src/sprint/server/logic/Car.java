@@ -1,13 +1,15 @@
 package sprint.server.logic;
 
-import java.util.ArrayList;
+import sprint.server.net.PlayerControls;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
 
 
@@ -18,14 +20,9 @@ public class Car{
 	public static enum SteerDirection {
 		SteerLeft, SteerRight, SteerNone;
 	}
-	
-
 	private Body body;
 	Sprite carSprite;
-	private float angle;
-	private float maxSteer;
-	private float topSpeed;
-	private float maxForce;
+	private PlayerControls playerControls;
 	
 	public float getVelocity(){
 		return body.getLinearVelocity().len();
@@ -36,15 +33,8 @@ public class Car{
 	public float getAngle() {
 		return body.getAngle();
 	}
-
-	/**
-	 * @param angle the angle to set
-	 */
-	public void setAngle(float angle) {
-		this.angle = angle;
-	}
 	
-	public Car(World world)
+	public Car(World world, String identifier)
 	{	
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
@@ -64,8 +54,6 @@ public class Car{
 		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
 
 		
-		maxSteer = (float) (Math.PI/120);
-		angle = (float) (3*Math.PI);
 	}
 	
 	/**

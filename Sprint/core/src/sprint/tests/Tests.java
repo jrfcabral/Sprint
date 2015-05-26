@@ -1,8 +1,5 @@
 package sprint.tests;
 
-import static org.junit.Assert.*;
-
-import com.badlogic.gdx.math.Vector2;
 
 import sprint.server.logic.Car;
 import sprint.server.logic.Game;;

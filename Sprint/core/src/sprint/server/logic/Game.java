@@ -23,6 +23,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import sprint.server.logic.*;
+import sprint.server.net.Lobby;
+import sprint.server.net.Server;
 import sprint.tests.Tests;
 import utils.CameraManager;
 import utils.Settings;
@@ -32,6 +34,9 @@ public class Game extends ApplicationAdapter {
 	public static enum GameState{
 		Main, Lobby, InGame
 	}
+	Thread serverThread;
+	Server server;
+	Lobby lobby;
 	GameState state;
 	SpriteBatch batch;
 	Texture img;
@@ -42,23 +47,25 @@ public class Game extends ApplicationAdapter {
 	Car car;
 	CameraManager camManager;
 	MainMenu main;
-	boolean testing;
-	boolean server;
+	LobbyMenu lobbyMenu;
+	boolean testing;	
 	boolean pcControls;
 	
 	
 	protected boolean throttle;
 	protected boolean brake;
 	protected Car.SteerDirection steerDir;
-	
+	public Car addCar(String identifier){
+		return new Car(this.world, identifier);
+	}
 	@Override
 	public void create () {
 		state = GameState.Main;
 		
 		testing = false;
-		
-		
-		server = false;
+		lobby = new Lobby();
+		server = new Server(this, lobby);		
+
 
 		pcControls = true;
 		steerDir = Car.SteerDirection.SteerNone;
@@ -69,7 +76,7 @@ public class Game extends ApplicationAdapter {
 		camera.position.set(0, 0, 0);
 		camera.update();
 		batch = new SpriteBatch();
-		car = new Car(world);
+		car = new Car(world, "127.0.0.1");
 		Track track = new Track(world);
 		track.addSegment(0, 0, 200, 0);
 		track.addSegment(200, 0, 200, 200);
@@ -82,6 +89,7 @@ public class Game extends ApplicationAdapter {
 		track.apply();
 		
 		main = new MainMenu();
+		lobbyMenu = new LobbyMenu(lobby);
 		
 		camManager = new CameraManager();
 	}
@@ -93,14 +101,13 @@ public class Game extends ApplicationAdapter {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			main.draw();
 			if(main.startServer.isPressed()){
-				state = GameState.InGame;
-				if(!server){
-					launchServer();
-				}
+				lobby.startTimer();
+				state = GameState.Lobby;				
+					server.launchServer();
 			}
 		}
 		else if(state == GameState.Lobby){
-			;
+			lobbyMenu.draw();
 		}
 		else if(state == GameState.InGame){
 			drawGame(Gdx.graphics.getDeltaTime());
@@ -124,84 +131,7 @@ public class Game extends ApplicationAdapter {
 		}
 	}
 	
-	public void launchServer(){
-		new Thread(new Runnable(){
-	        @Override
-	        public void run() {
-	        	System.out.println("Thread is running");
-	          
-	        	ServerSocket serverSocket = null;
-	            try {
-					serverSocket = new ServerSocket(8888);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-	            
-	            while(true){
-	                // Create a socket
-	                Socket socket = null;
-	                DataOutputStream out = null;
-	                
-	                try {
-	                	socket = serverSocket.accept();
-	                	BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	                	out = new DataOutputStream(socket.getOutputStream());
-	                	String command = buffer.readLine();
-	                	System.out.println("From ip " + socket.getInetAddress() + ":");
-	                	System.out.println(command);
-	                	pcControls = false;
-	                	if(command.equals("Accelerate"))
-	                		throttle = true;
-	                	else if(command.equals("Nop")){
-	                		throttle = false;
-	                		brake = false;
-	                	}
-	                	else if(command.equals("Travate"))
-	                		brake = true;
-	                	else if(command.equals("Test")){
-	                		out.write("Received\n".getBytes());
-	                		out.flush();
-	                	}
-	                	else if(command.equals("Left")){
-	                		steerDir = Car.SteerDirection.SteerRight;
-	                	}
-	                	else if(command.equals("Right")){
-	                		steerDir = Car.SteerDirection.SteerLeft;
-	                	}
-	                	else if(command.equals("NoSteer")){
-	                		steerDir = Car.SteerDirection.SteerNone;
-	                	}
-	                }
-	                catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	                finally{
-	    				if(socket != null){
-	    					try{
-	    						socket.close();
-	    					}
-	    					catch(IOException e){
-	    						e.printStackTrace();
-	    					}
-	    					
-	    				}
-	    				
-	    				if(out != null){
-	    					try{
-	    						out.close();
-	    					}
-	    					catch(IOException e){
-	    						e.printStackTrace();
-	    					}
-	    				}
-	    			}
-	            }
-	        }
-	        
-	    }).start();
-		server = true;
-	}
+	
 	
 	
 	public void handleInput(float deltaTime){

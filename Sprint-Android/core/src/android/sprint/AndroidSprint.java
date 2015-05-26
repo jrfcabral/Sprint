@@ -86,7 +86,7 @@ public class AndroidSprint extends ApplicationAdapter {
 		}
 		else if(st == ControllerState.Connect){
 			connect.draw();
-			if(/*connect.connect.isPressed()){*/connect.getAck()){ //TIS BROKEN
+			if(connect.getAck()){ 
 				st = ControllerState.Game;
 				Gdx.input.setInputProcessor(stage);
 			}

@@ -20,7 +20,7 @@ public class MainMenu {
 	public MainMenu(){
 		mainMenu = new Stage();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-		startServer = new TextButton("Start Server", skin);
+		startServer = new TextButton("Start Server", skin);		
 		exit = new TextButton("Exit", skin);
 		logo = new Sprite(new Texture("SuperSprintlogo.png"));
 		
