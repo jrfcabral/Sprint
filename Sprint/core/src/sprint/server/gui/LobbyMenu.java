@@ -1,4 +1,4 @@
-package sprint.server.logic;
+package sprint.server.gui;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -20,6 +20,10 @@ public class LobbyMenu {
 	private TextArea ip;
 	private TextArea playerCounter;
 	private Lobby lobby;
+	
+	public int getLobbyElapsed(){
+		return lobby.getElapsed();
+	}
 	
 	public LobbyMenu(Lobby lobby){
 		lobbyMenu=new Stage();

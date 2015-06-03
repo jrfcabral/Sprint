@@ -32,11 +32,11 @@ public class ConnectMenu {
 		connectMenu = new Stage();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		ip = new TextArea("Server Ip", skin);
+		ip = new TextArea("192.168.1.85", skin);
 		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
 		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*2.0f);
 		
-		port = new TextArea("Port", skin);
+		port = new TextArea("8888", skin);
 		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
 		port.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, ip.getY() - port.getHeight()*1.2f);
 		
@@ -49,7 +49,7 @@ public class ConnectMenu {
 				try {
 					testSocket = new Socket(getIp(), getPort());
 					reader = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
-					String test = "Test\n";
+					String test = "TEST\n";
 					testSocket.getOutputStream().write(test.getBytes());
 					testSocket.getOutputStream().flush();
 					

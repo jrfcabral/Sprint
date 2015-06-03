@@ -2,8 +2,10 @@ package android.sprint;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -98,7 +100,19 @@ public class AndroidSprint extends ApplicationAdapter {
 		else if(st == ControllerState.Game){
 			update(brake, accel, left, right);
 			stage.draw();
+			if(Gdx.input.isKeyPressed(Buttons.BACK)){
+				sendMessage("LEAVE");
+				Gdx.app.exit();
+			}
 		}
+	}
+	
+	public void pause(){
+		if(Gdx.app.getType() ==ApplicationType.Android){
+			sendMessage("LEAVE");
+			Gdx.app.exit();
+		}
+		
 	}
 	
 	public void update(TextButton br, TextButton acc, TextButton lft, TextButton rgt){
@@ -129,28 +143,28 @@ public class AndroidSprint extends ApplicationAdapter {
 			if(state != st){
 				state = st;
 				if(state == 1){
-					sendMessage("Nop");
+					sendMessage("NOP");
 				}
 				else if(state == 0){
-					sendMessage("Accelerate");
+					sendMessage("THROTTLE");
 				}
 				else if(state == 2){
-					sendMessage("Travate");
+					sendMessage("BRAKE");
 				}
 			}
 			if(stateSteer != stst){
 				stateSteer = stst;
 				if(stateSteer == 3){
 					
-					sendMessage("NoSteer");
+					sendMessage("NOSTEER");
 				}
 				else if(stateSteer == 4){
 				
-					sendMessage("Left");
+					sendMessage("STEER_LEFT");
 				}
 				else if(stateSteer == 5){
 					
-					sendMessage("Right");
+					sendMessage("STEER_RIGHT");
 				}
 			}
 		}

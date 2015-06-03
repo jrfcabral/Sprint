@@ -7,13 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-public class Track {
+public class Track{
 	
 	private HashSet<Body> bodies;
 	private ArrayList<BodyFixture> segments;
 	private World world;
+	private Body finishLine;	
 	
 	private static final float BOUNDARY_RESTITUTION = 1.0f;
+	private static final float SENSOR_RESTITUTION = 0f;
 	
 	private class BodyFixture{
 		public BodyDef body;
@@ -26,7 +28,8 @@ public class Track {
 			throw new IllegalArgumentException();
 		this.world = world;
 		bodies = new HashSet<Body>();
-		segments = new ArrayList<BodyFixture>();		
+		segments = new ArrayList<BodyFixture>();
+		
 	}
 	
 	/**
@@ -58,6 +61,24 @@ public class Track {
 		segments.add(registry);
 	}
 	
+
+	public void addFinishLine(int x, int y, int xf, int yf){
+		BodyDef bodydef = new BodyDef();
+		bodydef.position.set(new Vector2(x,y));
+		bodydef.type = BodyType.StaticBody;
+		Body body = world.createBody(bodydef);
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(xf-x, yf-y);
+		fdef.restitution = SENSOR_RESTITUTION;
+		fdef.isSensor = true;
+		fdef.shape = shape;		
+		body.createFixture(fdef);
+	
+		
+		
+	}
+	
 	/**
 	 * Applies the current settings of this track to its world.
 	 */
@@ -82,4 +103,13 @@ public class Track {
 			world.destroyBody(body);			
 		}		
 	}
+	
+	/**
+	 * @return the finishLine
+	 */
+	public Body getFinishLine() {
+		return finishLine;
+	}
+
+
 }

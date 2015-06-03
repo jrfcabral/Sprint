@@ -10,20 +10,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Disposable;
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 
 
 /**
  * Represents a car inside the game logic.
  */
-public class Car{
+public class Car implements Disposable{
 	public static enum SteerDirection {
 		SteerLeft, SteerRight, SteerNone;
 	}
 	private Body body;
-	Sprite carSprite;
+	private Sprite carSprite;
 	private PlayerControls playerControls;
-	
+	private World world;
 	public float getVelocity(){
 		return body.getLinearVelocity().len();
 	}
@@ -34,8 +36,9 @@ public class Car{
 		return body.getAngle();
 	}
 	
-	public Car(World world, String identifier)
+	public Car(Race race, PlayerControls controls)
 	{	
+		this.world = race.getWorld();
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
 		def.position.set(new Vector2(20,150));
@@ -46,14 +49,23 @@ public class Car{
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0.1f;
-		fdef.friction = 1f;
-		body.createFixture(fdef);
+		fdef.friction = 1f;		
+		body.createFixture(fdef).setUserData(this);
+		body.setUserData(this);
 		shape.dispose();
 		carSprite = new Sprite(new Texture("MLGCar.png"));
 		carSprite.setSize(10, 5);
 		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
-
+		playerControls = controls;
 		
+		
+	}
+	public void update(){
+		if(!this.playerControls.isActive()){
+			this.dispose();
+		}
+			
+		this.update(playerControls.getThrottle(), playerControls.getBrake(), playerControls.getSteer());
 	}
 	
 	/**
@@ -143,4 +155,17 @@ public class Car{
 	public void setVelocity(float vel){
 		body.setLinearVelocity(vel*((float)Math.cos(getAngle())), vel*((float)Math.sin(getAngle())));
 	}
+	@Override
+	public void dispose() {	
+		this.world.destroyBody(this.body);		
+	}
+	
+	public boolean getAlive(){
+		return this.playerControls.isActive();
+	}
+	
+	public String getIdentifier(){
+		return this.playerControls.getId();
+	}
+	
 }

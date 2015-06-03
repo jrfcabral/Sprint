@@ -1,4 +1,4 @@
-package sprint.server.logic;
+package sprint.server.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,11 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MainMenu {
-	Stage mainMenu;
-	Skin skin;
-	TextButton startServer;
-	TextButton exit;
-	Sprite logo;
+	private Stage mainMenu;
+	private Skin skin;
+	private TextButton startServer;
+	private TextButton exit;
+	private Sprite logo;
 	
 	public MainMenu(){
 		mainMenu = new Stage();
@@ -56,5 +56,8 @@ public class MainMenu {
 		
 	}
 	
+	public boolean isStartServer(){
+		return startServer.isPressed();
+	}
 	
 }

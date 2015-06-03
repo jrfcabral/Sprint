@@ -2,20 +2,21 @@ package sprint.tests;
 
 
 import sprint.server.logic.Car;
-import sprint.server.logic.Game;;
+
+import sprint.server.logic.Race;
 
 
 public class Tests {
 	public int passed;
 	public int failed;
 	public Car car;
-	public Game game;
+	public Race race;
 	
-	public Tests(Game game){
+	public Tests(Race race){
 		passed = 0;
 		failed = 0;
-		this.game = game;
-		car = game.getCar();
+		this.race = race;
+		car = race.getCar();
 	}
 	
 	public void run(){
@@ -56,7 +57,7 @@ public class Tests {
 		
 		for(int i = 0; i < 10; i++){
 			car.update(true, false, Car.SteerDirection.SteerNone);
-			game.getWorld().step(1/60f, 6, 2);
+			race.getWorld().step(1/60f, 6, 2);
 		}
 		if(car.getVelocity() <= 0){
 			System.out.println("Accelerate test failed.");
@@ -77,7 +78,7 @@ public class Tests {
 		
 		for(int i = 0; i < 10; i++){
 			car.update(false, true, Car.SteerDirection.SteerNone);
-			game.getWorld().step(1/60f, 6, 2);
+			race.getWorld().step(1/60f, 6, 2);
 		}
 		
 		if(car.getVelocity() >= 30){
@@ -99,7 +100,7 @@ public class Tests {
 		
 		for(int i = 0; i < 10; i++){
 			car.update(false, false, Car.SteerDirection.SteerLeft);
-			game.getWorld().step(1/60f, 6, 2);
+			race.getWorld().step(1/60f, 6, 2);
 		}
 		
 		if(car.getAngle() >= oldAng){
@@ -120,7 +121,7 @@ public class Tests {
 		
 		for(int i = 0; i < 10; i++){
 			car.update(false, false, Car.SteerDirection.SteerRight);
-			game.getWorld().step(1/60f, 6, 2);
+			race.getWorld().step(1/60f, 6, 2);
 		}
 		
 		if(car.getAngle() <= oldAng){
