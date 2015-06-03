@@ -67,6 +67,7 @@ public class Track{
 		bodydef.position.set(new Vector2(x,y));
 		bodydef.type = BodyType.StaticBody;
 		Body body = world.createBody(bodydef);
+		body.setUserData(new String("finish"));
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(xf-x, yf-y);

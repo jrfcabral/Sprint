@@ -26,6 +26,11 @@ public class Car implements Disposable{
 	private Sprite carSprite;
 	private PlayerControls playerControls;
 	private World world;
+	private int laps = 0;
+	
+	public Vector2 getLinearVelocity(){
+		return body.getLinearVelocity();
+	}
 	public float getVelocity(){
 		return body.getLinearVelocity().len();
 	}
@@ -43,6 +48,7 @@ public class Car implements Disposable{
 		def.type = BodyDef.BodyType.DynamicBody;		
 		def.position.set(new Vector2(20,150));
 		body = world.createBody(def);
+		body.setUserData(this);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(4.5f, 2.5f);
@@ -50,7 +56,7 @@ public class Car implements Disposable{
 		fdef.density = 1f;
 		fdef.restitution = 0.1f;
 		fdef.friction = 1f;		
-		body.createFixture(fdef).setUserData(this);
+		body.createFixture(fdef);
 		body.setUserData(this);
 		shape.dispose();
 		carSprite = new Sprite(new Texture("MLGCar.png"));
@@ -146,6 +152,14 @@ public class Car implements Disposable{
 
 		//System.out.println("out"+body.getLinearVelocity());
 				
+	}
+	
+	public void incrementLap(){
+		laps++;
+	}
+	public void decrementLap(){
+		if(laps >0)
+			laps--;
 	}
 	
 	public Sprite getSprite(){

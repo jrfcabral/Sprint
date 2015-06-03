@@ -17,9 +17,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Race {
+public class Race implements ContactListener{
+	private static final int DIRECTION = 1;
+	
 	private SpriteBatch batch;
 	private World world;
 	private Track track;
@@ -31,6 +37,7 @@ public class Race {
 	
 	public Race(){
 		world  = new World(new Vector2(0,0), true);
+		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
 		track.addSegment(0, 0, 200, 0);
@@ -81,6 +88,8 @@ public class Race {
 		}
 		
 	}	
+
+
 	public void handleInput(float deltaTime){
 		
 		
@@ -145,6 +154,56 @@ public class Race {
 
 	public void addCar(Car car) {
 		this.cars.add(car);
+		
+	}
+
+	@Override
+	public void beginContact(Contact contact) {
+		
+		Car car;
+		Object a = contact.getFixtureA().getBody().getUserData();
+		Object b = contact.getFixtureB().getBody().getUserData();
+		if(a!= null && a.toString().equals("finish"))			
+			if(b != null && b instanceof Car)
+				car =(Car) contact.getFixtureB().getBody().getUserData();
+			else
+				return;
+		else if (b != null && b.toString().equals("finish"))
+			if(a != null && a instanceof Car)
+				car = (Car) contact.getFixtureB().getBody().getUserData();
+			else				
+				return;
+			
+				
+		else
+			return;
+		
+		if (car.getLinearVelocity().x*DIRECTION > 0){
+			System.out.println("dei uma voltinha na minha lambreta");
+			car.incrementLap();
+		}
+		else{
+			System.out.println("desdei uma voltinha na minha lambreta");
+			car.decrementLap();
+		}
+		
+	}
+
+	@Override
+	public void endContact(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {
+		// TODO Auto-generated method stub
 		
 	}
 		
