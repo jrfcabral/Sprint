@@ -33,7 +33,7 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		race = new Race();
+		//race = new Race();
 		state = GameState.Main;		
 		lobby = new Lobby();
 		server = new Server(this, lobby);
@@ -59,11 +59,17 @@ public class Game extends ApplicationAdapter {
 			if (lobby.getElapsed() == 5){
 				this.state = GameState.InGame;
 				lobby.stopTimer();
+				race = new Race();
 				this.startGame(lobby.getIdentifiers());
 			}
 		}
-		else if(state == GameState.InGame)
-			race.drawGame(Gdx.graphics.getDeltaTime());		
+		else if(state == GameState.InGame){
+			if(race.getEnded()){
+				state = GameState.Lobby;
+				lobby.startTimer();
+			}
+			race.drawGame(Gdx.graphics.getDeltaTime());
+		}
 	}
 	
 	private void startGame(LinkedList<String> identifiers) {

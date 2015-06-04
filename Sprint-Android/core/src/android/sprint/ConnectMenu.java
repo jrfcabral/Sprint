@@ -32,12 +32,12 @@ public class ConnectMenu {
 		connectMenu = new Stage();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		ip = new TextArea("192.168.1.85", skin);
-		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
+		ip = new TextArea("192.168.1.10", skin);
+		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
 		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*2.0f);
 		
 		port = new TextArea("8888", skin);
-		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.05f);
+		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
 		port.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, ip.getY() - port.getHeight()*1.2f);
 		
 		connect = new TextButton("Connect", skin);		

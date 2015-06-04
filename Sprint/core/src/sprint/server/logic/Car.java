@@ -162,6 +162,10 @@ public class Car implements Disposable{
 			laps--;
 	}
 	
+	public int getLaps(){
+		return this.laps;
+	}
+	
 	public Sprite getSprite(){
 		return this.carSprite;
 	}

@@ -25,7 +25,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Race implements ContactListener{
 	private static final int DIRECTION = 1;
-	
+	private static final int LAP_NUMBER = 3;
 	private SpriteBatch batch;
 	private World world;
 	private Track track;
@@ -34,6 +34,7 @@ public class Race implements ContactListener{
 	private CameraManager camManager;
 	private ArrayList<Car> cars;
 	private boolean testing;
+	private boolean ended;
 	
 	public Race(){
 		world  = new World(new Vector2(0,0), true);
@@ -58,7 +59,7 @@ public class Race implements ContactListener{
 		
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
-		
+		ended = false;
 	}
 	
 	public void drawGame(float deltaTime){
@@ -85,6 +86,9 @@ public class Race implements ContactListener{
 			handleInput(Gdx.graphics.getDeltaTime());
 			
 			world.step(1/60f, 6, 2);
+			
+			/*Isto tem q ser posto noutro sitio depois (maybe ?)*/
+			checkEnd();
 		}
 		
 	}	
@@ -205,6 +209,32 @@ public class Race implements ContactListener{
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void checkEnd(){
+		boolean oneEnded = false;
+		boolean allEnded = true;
+		for(Car car: cars){
+			if(car.getLaps() == LAP_NUMBER){
+				if(!oneEnded){
+					oneEnded = true;
+				}
+			}
+			else{
+				allEnded = false;
+			}
+		}
+		if(allEnded){
+			ended = true;
+			return;
+		}
+		else if(oneEnded){
+			/*run 30 sec timer to end game?*/
+		}
+	}
+
+	public boolean getEnded() {
+		return ended;
 	}
 		
 }

@@ -35,7 +35,7 @@ public class LobbyMenu {
 			ip = new TextArea("Nenhum IP", lobbySkin);			
 		}
 		this.lobby = lobby;
-		playerCounter = new TextArea(Integer.toString(lobby.getQueueSize())+Lobby.MAX_PLAYERS, lobbySkin);
+		playerCounter = new TextArea("Players: \n" + Integer.toString( lobby.getQueueSize())  + "/" + Lobby.MAX_PLAYERS, lobbySkin);
 		playerCounter.setSize(Gdx.graphics.getWidth()*0.3f, Gdx.graphics.getHeight()*0.2f);
 		playerCounter.setPosition(Gdx.graphics.getWidth()/2.0f + playerCounter.getWidth()*1.0f, Gdx.graphics.getHeight()-Gdx.graphics.getHeight()*0.5f);
 		
@@ -56,7 +56,7 @@ public class LobbyMenu {
 		lobbyLogo.draw(lobbyMenu.getBatch());
 		lobbyMenu.getBatch().end();
 		lobbyMenu.draw();
-		playerCounter.setText(Integer.toString(lobby.getQueueSize())+Lobby.MAX_PLAYERS);
+		playerCounter.setText("Players: \n" + Integer.toString( lobby.getQueueSize())  + "/" + Lobby.MAX_PLAYERS);
 		
 	}
 	
