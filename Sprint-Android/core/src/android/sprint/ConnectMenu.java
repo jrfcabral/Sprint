@@ -74,9 +74,13 @@ public class ConnectMenu {
 					String[] tokens = response.split(" ");
 					
 					System.out.println(response);
-					if(tokens[0].equals("Received")){
-						 ack = true;
-						 color = tokens[1];
+					if(tokens[0].equals("Received")){ //to be changed
+						 if(!tokens[1].equals("Full")){
+							 color = tokens[1];
+							 ack = true;
+						 }
+							
+						 
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

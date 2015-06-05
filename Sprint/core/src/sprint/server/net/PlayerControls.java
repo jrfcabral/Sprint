@@ -51,6 +51,7 @@ public class PlayerControls {
 	private boolean brake;
 	private Car.SteerDirection steer;
 	private String id;
+	private String color;
 	private boolean active;
 	/**
 	 * @return the active
@@ -90,12 +91,16 @@ public class PlayerControls {
 		return this.id;
 	}
 	
+	public String getColor(){
+		return color;
+	}
 
 	
-	public PlayerControls(String identifier, Server server){
+	public PlayerControls(String identifier, Server server , String color){
 		server.bindId(identifier, this);		
 		steer = Car.SteerDirection.SteerNone;
 		id = identifier;
+		this.color = color;
 		active = true;
 	}	
 	

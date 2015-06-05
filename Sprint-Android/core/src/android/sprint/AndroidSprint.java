@@ -28,31 +28,31 @@ public class AndroidSprint extends ApplicationAdapter {
 	public static enum Color{
 		Red{
 			public void setColor(){
-				Gdx.gl.glClearColor(1, 0, 0, 1);
+				Gdx.gl.glClearColor(0.81f, 0, 0, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}, 
 		Blue{
 			public void setColor(){
-				Gdx.gl.glClearColor(0, 0, 1, 1);
+				Gdx.gl.glClearColor(0, 0.52f, 0.81f, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}, 
 		Green{
 			public void setColor(){
-				Gdx.gl.glClearColor(0, 1, 0, 1);
+				Gdx.gl.glClearColor(0.03f, 0.74f, 0.01f, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}, 
-		Black{
+		Pink{
 			public void setColor(){
-				Gdx.gl.glClearColor(0, 0, 0, 1);
+				Gdx.gl.glClearColor(0.91f, 0.51f, 0.76f, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		}, 
-		Yellow{
+		Orange{
 			public void setColor(){
-				Gdx.gl.glClearColor(1, 1, 0, 1);
+				Gdx.gl.glClearColor(1, 0.51f, 0.04f, 1);
 				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			}
 		};

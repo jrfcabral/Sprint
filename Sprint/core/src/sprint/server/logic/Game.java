@@ -73,8 +73,10 @@ public class Game extends ApplicationAdapter {
 	}
 	
 	private void startGame(LinkedList<String> identifiers) {
+		String[] colors = new String[]{"Red", "Blue", "Green", "Pink", "Orange"};
+		int i = 0;
 		for (String id : identifiers){
-			PlayerControls controls = new PlayerControls(id, server);
+			PlayerControls controls = new PlayerControls(id, server, colors[i++]);
 			Car car = new Car(this.race, controls);
 			race.addCar(car);
 		}		

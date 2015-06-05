@@ -41,6 +41,7 @@ public class Server {
                 	BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 	out = new DataOutputStream(socket.getOutputStream());   
                 	String message = buffer.readLine();
+                	
                 	PlayerControls.Command command = PlayerControls.Command.valueOf(message);
                 	if(bindings.get(socket.getInetAddress().toString()) != null){
                 		command.handleCommand(bindings.get(socket.getInetAddress().toString()));
@@ -55,14 +56,22 @@ public class Server {
                 		switch(lobby.getQueueSize()){
                 			case 1:
                 				out.write("Received Red\n".getBytes());
+                				break;
                 			case 2:
                 				out.write("Received Blue\n".getBytes());
+                				break;
                 			case 3:
                 				out.write("Received Green\n".getBytes());
+                				break;
                 			case 4:
-                				out.write("Received Black\n".getBytes());
+                				out.write("Received Pink\n".getBytes());
+                				break;
                 			case 5:
-                				out.write("Received Yellow\n".getBytes());
+                				out.write("Received Orange\n".getBytes());
+                				break;
+                			default: 
+                				out.write("Received Full\n".getBytes());
+                				break;
                 		}
                 		
                 		out.flush();
