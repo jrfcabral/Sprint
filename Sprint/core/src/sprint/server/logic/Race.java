@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import sprint.server.gui.LobbyMenu;
 import sprint.server.logic.Game.GameState;
+import sprint.server.net.Lobby;
 import sprint.server.net.PlayerControls;
 import sprint.tests.Tests;
 import utils.CameraManager;
@@ -23,7 +25,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Race implements ContactListener{
+public class Race implements ContactListener, State{
 	private static final int DIRECTION = 1;
 	private static final int LAP_NUMBER = 3;
 	private SpriteBatch batch;
@@ -35,8 +37,11 @@ public class Race implements ContactListener{
 	private ArrayList<Car> cars;
 	private boolean testing;
 	private boolean ended;
+	private final StateMachine stateMachine;
+	private Lobby lobby;
 	
-	public Race(){
+	public Race(StateMachine stateMachine, Lobby lobby){
+		this.lobby = lobby;
 		world  = new World(new Vector2(0,0), true);
 		world.setContactListener(this);
 		batch = new SpriteBatch();
@@ -60,14 +65,12 @@ public class Race implements ContactListener{
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
 		ended = false;
+		this.stateMachine = stateMachine;
 	}
 	
-	public void drawGame(float deltaTime){
-		
+	public void draw(){
 			camManager.update(Gdx.graphics.getDeltaTime());
-			camManager.applyTo(camera);
-			Gdx.gl.glClearColor(1, 1, 1, 1);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			camManager.applyTo(camera);	
 			batch.setProjectionMatrix(camera.combined);
 			
 			ListIterator<Car> it = cars.listIterator();
@@ -93,6 +96,13 @@ public class Race implements ContactListener{
 		
 	}	
 
+	public void startGame(LinkedList<String> identifiers) {
+		for (String id : identifiers){
+			PlayerControls controls = new PlayerControls(id, this.stateMachine.getServer());
+			Car car = new Car(this, controls);
+			addCar(car);
+		}		
+	}
 
 	public void handleInput(float deltaTime){
 		
@@ -194,22 +204,11 @@ public class Race implements ContactListener{
 	}
 
 	@Override
-	public void endContact(Contact contact) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void endContact(Contact contact) {}
 	@Override
-	public void preSolve(Contact contact, Manifold oldManifold) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void preSolve(Contact contact, Manifold oldManifold) {}
 	@Override
-	public void postSolve(Contact contact, ContactImpulse impulse) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void postSolve(Contact contact, ContactImpulse impulse) {}
 	
 	private void checkEnd(){
 		boolean oneEnded = false;
@@ -235,6 +234,20 @@ public class Race implements ContactListener{
 
 	public boolean getEnded() {
 		return ended;
+	}
+
+	@Override
+	public void update() {
+		checkEnd();
+		if (false)
+			this.stateMachine.setState(new LobbyMenu(this.lobby, this.stateMachine));
+		
+	}
+
+	@Override
+	public void create() {
+		// TODO Auto-generated method stub
+		
 	}
 		
 }

@@ -1,12 +1,7 @@
 package sprint.server.logic;
 
-import java.util.LinkedList;
-
 import sprint.server.gui.LobbyMenu;
 import sprint.server.gui.MainMenu;
-import sprint.server.net.Lobby;
-import sprint.server.net.PlayerControls;
-import sprint.server.net.Server;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -18,12 +13,10 @@ public class Game extends ApplicationAdapter {
 	public static enum GameState{
 		Main, Lobby, InGame
 	}
-	Thread serverThread;
-	Server server;
-	Lobby lobby;
+	
 	GameState state;
 	Race race;	
-	
+	StateMachine stateMachine;
 	
 	
 	MainMenu main;
@@ -34,19 +27,22 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		//race = new Race();
+		stateMachine = new StateMachine();
 		state = GameState.Main;		
-		lobby = new Lobby();
-		server = new Server(this, lobby);
+		
 		pcControls = true;		
-		main = new MainMenu();
-		lobbyMenu = new LobbyMenu(lobby);		
+		main = new MainMenu(stateMachine);
+		//lobbyMenu = new LobbyMenu(lobby, stateMachine);		
 	}
 
 	@Override
-	public void render () {	
-		if(state == GameState.Main){
-			Gdx.gl.glClearColor(1, 1, 1, 1);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	public void render () {
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		stateMachine.update();
+		stateMachine.draw();
+		/*if(state == GameState.Main){
+			
 			main.draw();
 			if(main.isStartServer()){
 				lobby.startTimer();
@@ -68,24 +64,18 @@ public class Game extends ApplicationAdapter {
 				state = GameState.Lobby;
 				lobby.startTimer();
 			}
-			race.drawGame(Gdx.graphics.getDeltaTime());
-		}
+			race.draw();
+		}*/
 	}
 	
-	private void startGame(LinkedList<String> identifiers) {
-		for (String id : identifiers){
-			PlayerControls controls = new PlayerControls(id, server);
-			Car car = new Car(this.race, controls);
-			race.addCar(car);
-		}		
-	}
+	
 	
 	
 	public void handleInput(float deltaTime){			
 		if (state ==GameState.InGame)
 			if (Gdx.input.isKeyPressed(Keys.ESCAPE)){
 				state = GameState.Lobby;
-				lobby.startTimer();
+				//lobby.startTimer();
 			}
 	}
 	

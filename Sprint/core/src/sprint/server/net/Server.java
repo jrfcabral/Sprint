@@ -8,17 +8,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
-import com.badlogic.gdx.Gdx;
-
-import sprint.server.logic.Game;
-
 public class Server {
 	private Thread thread;
-	private Game game;
 	private Lobby lobby;
 	private HashMap<String, PlayerControls> bindings;
-	private class ServerThread implements Runnable{
-		
+	
+	public class ServerRunningException extends RuntimeException{
+		private static final long serialVersionUID = -8926610866812393171L;}	
+	
+	private class ServerThread implements Runnable{		
 		@Override
 		public void run() {
 			System.out.println("Thread is running");
@@ -88,10 +86,9 @@ public class Server {
             }
         }
 	}
-	public class ServerRunningException extends RuntimeException{}	
-	public Server(Game game, Lobby lobby){
+	
+	public Server(Lobby lobby){
 		this.lobby = lobby;
-		this.game = game;
 		thread = new Thread(new ServerThread());
 		this.bindings = new HashMap<String, PlayerControls>();
 	}

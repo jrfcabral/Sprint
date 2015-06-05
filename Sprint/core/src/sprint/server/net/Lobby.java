@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 public class Lobby {
 	public static final int MAX_PLAYERS = 5;
+	public static final int READY_TIMER = 1;
 	
 	private LinkedList<String> players;
 	private int elapsed = 0;
@@ -27,20 +28,15 @@ public class Lobby {
 	}
 	
 	public void startTimer(){
-		//if(!timerActivated){
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerUpdate(), 0, 1000);
 			timerActivated = true;
-		//}
 	}
 	
 	public void stopTimer(){
-		//if(timerActivated){
-			this.timer.cancel();
-			elapsed = 0;
-			timerActivated = false;
-		//}
-		
+		this.timer.cancel();
+		elapsed = 0;
+		timerActivated = false;		
 	}
 	public LinkedList<String> getIdentifiers(){
 		return this.players;

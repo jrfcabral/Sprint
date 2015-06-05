@@ -32,7 +32,7 @@ public class ConnectMenu {
 		connectMenu = new Stage();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		ip = new TextArea("192.168.1.10", skin);
+		ip = new TextArea("192.168.1.85", skin);
 		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
 		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*2.0f);
 		
