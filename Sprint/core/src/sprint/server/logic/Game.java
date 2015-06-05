@@ -79,6 +79,11 @@ public class Game extends ApplicationAdapter {
 			}
 	}
 	
+	public void resize(int width, int height){
+		main.resize(width, height);
+		//lobbyMenu.resize(width, height);
+	}
+	
 	
 	
 }

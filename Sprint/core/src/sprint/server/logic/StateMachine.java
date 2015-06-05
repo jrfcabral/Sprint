@@ -1,5 +1,7 @@
 package sprint.server.logic;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+
 import sprint.server.gui.MainMenu;
 import sprint.server.net.Lobby;
 import sprint.server.net.Server;
@@ -56,4 +58,5 @@ public class StateMachine {
 		if (lobby == null)System.out.println("erro aqui");
 		return this.lobby;
 	}
+	
 }

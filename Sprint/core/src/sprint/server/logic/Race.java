@@ -253,5 +253,11 @@ public class Race implements ContactListener, State{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		// TODO Auto-generated method stub
+		
+	}
 		
 }
