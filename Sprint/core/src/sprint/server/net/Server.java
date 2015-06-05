@@ -39,19 +39,41 @@ public class Server {
                 	BufferedReader buffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 	out = new DataOutputStream(socket.getOutputStream());   
                 	String message = buffer.readLine();
+                	
                 	PlayerControls.Command command = PlayerControls.Command.valueOf(message);
                 	if(bindings.get(socket.getInetAddress().toString()) != null){
                 		command.handleCommand(bindings.get(socket.getInetAddress().toString()));
-                		System.out.println("Disse vou-te encontrar e encontrei");
+                		//System.out.println("Disse vou-te encontrar e encontrei");
                 	}
                 	
                 	System.out.println("From ip " + socket.getInetAddress() + ":");
                 	System.out.println(message);
                 	
-                	if(message.equals("TEST")){                		
-                		out.write("Received\n".getBytes());
+                	if(message.equals("TEST")){
+                		lobby.addToQueue(socket.getInetAddress().toString());
+                		switch(lobby.getQueueSize()){
+                			case 1:
+                				out.write("Received Red\n".getBytes());
+                				break;
+                			case 2:
+                				out.write("Received Blue\n".getBytes());
+                				break;
+                			case 3:
+                				out.write("Received Green\n".getBytes());
+                				break;
+                			case 4:
+                				out.write("Received Pink\n".getBytes());
+                				break;
+                			case 5:
+                				out.write("Received Orange\n".getBytes());
+                				break;
+                			default: 
+                				out.write("Received Full\n".getBytes());
+                				break;
+                		}
+                		
                 		out.flush();
-                		lobby.addToQueue(socket.getInetAddress().toString());                		               		                		
+                		                		               		                		
                 	}
                 	if (message.equals("LEAVE")){                		
                 		Server.this.unbindId(socket.getInetAddress().toString());

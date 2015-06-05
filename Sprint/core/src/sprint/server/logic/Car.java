@@ -2,6 +2,9 @@ package sprint.server.logic;
 
 import sprint.server.net.PlayerControls;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -22,6 +25,47 @@ public class Car implements Disposable{
 	public static enum SteerDirection {
 		SteerLeft, SteerRight, SteerNone;
 	}
+	
+	public static enum Color{
+		Red{
+			public Sprite getTex(){
+				Sprite spr;
+				spr = new Sprite(new Texture("MLGCar.png"));
+				return spr;
+			}
+		}, 
+		Blue{
+			public Sprite getTex(){
+				Sprite spr;
+				spr = new Sprite(new Texture("MLGCarBlue.png"));
+				return spr;
+			}
+		}, 
+		Green{
+			public Sprite getTex(){
+				Sprite spr;
+				spr = new Sprite(new Texture("MLGCarGreen.png"));
+				return spr;
+			}
+		}, 
+		Pink{
+			public Sprite getTex(){
+				Sprite spr;
+				spr = new Sprite(new Texture("MLGCarPink.png"));
+				return spr;
+			}
+		}, 
+		Orange{
+			public Sprite getTex(){
+				Sprite spr;
+				spr = new Sprite(new Texture("MLGCarOrange.png"));
+				return spr;
+			}
+		};
+		public abstract Sprite getTex();
+	}
+	
+	
 	private Body body;
 	private Sprite carSprite;
 	private PlayerControls playerControls;
@@ -59,10 +103,12 @@ public class Car implements Disposable{
 		body.createFixture(fdef);
 		body.setUserData(this);
 		shape.dispose();
-		carSprite = new Sprite(new Texture("MLGCar.png"));
+		playerControls = controls;
+		Color color = Color.valueOf(controls.getColor());
+		carSprite = color.getTex(); 
 		carSprite.setSize(10, 5);
 		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
-		playerControls = controls;
+		
 		
 		
 	}

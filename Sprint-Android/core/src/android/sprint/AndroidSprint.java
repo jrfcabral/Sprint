@@ -24,6 +24,41 @@ public class AndroidSprint extends ApplicationAdapter {
 	public static enum ControllerState{
 		Main, Connect, Game;
 	}
+	
+	public static enum Color{
+		Red{
+			public void setColor(){
+				Gdx.gl.glClearColor(0.81f, 0, 0, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+		}, 
+		Blue{
+			public void setColor(){
+				Gdx.gl.glClearColor(0, 0.52f, 0.81f, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+		}, 
+		Green{
+			public void setColor(){
+				Gdx.gl.glClearColor(0.03f, 0.74f, 0.01f, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+		}, 
+		Pink{
+			public void setColor(){
+				Gdx.gl.glClearColor(0.91f, 0.51f, 0.76f, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+		}, 
+		Orange{
+			public void setColor(){
+				Gdx.gl.glClearColor(1, 0.51f, 0.04f, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+		};
+		public abstract void setColor();
+	}
+	
 	SpriteBatch batch;
 	Texture img;
 	TextButton accel, brake, left, right;
@@ -33,6 +68,7 @@ public class AndroidSprint extends ApplicationAdapter {
 	ControllerState st;
 	MainMenu main;
 	ConnectMenu connect;
+	Color bg;
 	int state;
 	int stateSteer;
 	
@@ -77,12 +113,10 @@ public class AndroidSprint extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(st == ControllerState.Main){
 			main.draw(batch);
 			if(main.enter.isPressed()){
-				st = ControllerState.Connect; 						//FOR DEMONSTRATION PURPOSES
+				st = ControllerState.Connect; 						
 				Gdx.input.setInputProcessor(connect.connectMenu);
 			}
 		}
@@ -98,6 +132,8 @@ public class AndroidSprint extends ApplicationAdapter {
 			}
 		}
 		else if(st == ControllerState.Game){
+			bg = Color.valueOf(connect.getColor());
+			bg.setColor();
 			update(brake, accel, left, right);
 			stage.draw();
 			if(Gdx.input.isKeyPressed(Buttons.BACK)){

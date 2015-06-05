@@ -1,6 +1,7 @@
 package android.sprint;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,6 +50,8 @@ public class MainMenu {
 	}
 	
 	public void draw(SpriteBatch batch){
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		mainMenu.getBatch().begin();
 		logo.draw(mainMenu.getBatch());
 		mainMenu.getBatch().end();

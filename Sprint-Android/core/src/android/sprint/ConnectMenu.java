@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,6 +26,7 @@ public class ConnectMenu {
 	Socket testSocket;
 	DataInputStream dis;
 	BufferedReader reader;
+	String color;
 	boolean ack;
 	
 	public ConnectMenu(){
@@ -69,9 +71,16 @@ public class ConnectMenu {
 				try{										
 					System.out.println(testSocket.getInputStream().available());
 					String response = reader.readLine();
+					String[] tokens = response.split(" ");
+					
 					System.out.println(response);
-					if(response.equals("Received")){
-						 ack = true;
+					if(tokens[0].equals("Received")){ //to be changed
+						 if(!tokens[1].equals("Full")){
+							 color = tokens[1];
+							 ack = true;
+						 }
+							
+						 
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -111,6 +120,8 @@ public class ConnectMenu {
 	}
 	
 	public void draw(){
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		connectMenu.draw();
 	}
 	
@@ -124,6 +135,10 @@ public class ConnectMenu {
 	
 	public boolean getAck(){
 		return ack;
+	}
+	
+	public String getColor(){
+		return color;
 	}
 	
 }

@@ -68,7 +68,7 @@ public class Game extends ApplicationAdapter {
 		}*/
 	}
 	
-	
+
 	
 	
 	public void handleInput(float deltaTime){			

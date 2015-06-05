@@ -82,6 +82,7 @@ public class Race implements ContactListener, State{
 				car.update();
 				if (!car.getAlive())
 					it.remove();
+			}
 							
 			
 			debugRenderer.render(world, camera.combined);		
@@ -94,15 +95,18 @@ public class Race implements ContactListener, State{
 			checkEnd();
 		}
 		
-	}	
+		
 
-	public void startGame(LinkedList<String> identifiers) {
+	private void startGame(LinkedList<String> identifiers) {
+		String[] colors = new String[]{"Red", "Blue", "Green", "Pink", "Orange"};
+		int i = 0;
 		for (String id : identifiers){
-			PlayerControls controls = new PlayerControls(id, this.stateMachine.getServer());
+			PlayerControls controls = new PlayerControls(id, stateMachine.getServer(), colors[i++]);
 			Car car = new Car(this, controls);
 			addCar(car);
 		}		
 	}
+
 
 	public void handleInput(float deltaTime){
 		
