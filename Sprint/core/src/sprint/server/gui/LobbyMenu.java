@@ -53,6 +53,7 @@ public class LobbyMenu implements State {
 			System.out.println("Vou mudar");
 			this.lobby.stopTimer();
 			Race race = new Race(state, lobby);
+			race.startGame(this.lobby.getIdentifiers());
 			this.state.setState(race);			
 		}
 		
