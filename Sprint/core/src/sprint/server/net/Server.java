@@ -44,16 +44,29 @@ public class Server {
                 	PlayerControls.Command command = PlayerControls.Command.valueOf(message);
                 	if(bindings.get(socket.getInetAddress().toString()) != null){
                 		command.handleCommand(bindings.get(socket.getInetAddress().toString()));
-                		System.out.println("Disse vou-te encontrar e encontrei");
+                		//System.out.println("Disse vou-te encontrar e encontrei");
                 	}
                 	
                 	System.out.println("From ip " + socket.getInetAddress() + ":");
                 	System.out.println(message);
                 	
-                	if(message.equals("TEST")){                		
-                		out.write("Received\n".getBytes());
+                	if(message.equals("TEST")){
+                		lobby.addToQueue(socket.getInetAddress().toString());
+                		switch(lobby.getQueueSize()){
+                			case 1:
+                				out.write("Received Red\n".getBytes());
+                			case 2:
+                				out.write("Received Blue\n".getBytes());
+                			case 3:
+                				out.write("Received Green\n".getBytes());
+                			case 4:
+                				out.write("Received Black\n".getBytes());
+                			case 5:
+                				out.write("Received Yellow\n".getBytes());
+                		}
+                		
                 		out.flush();
-                		lobby.addToQueue(socket.getInetAddress().toString());                		               		                		
+                		                		               		                		
                 	}
                 	if (message.equals("LEAVE")){                		
                 		Server.this.unbindId(socket.getInetAddress().toString());
