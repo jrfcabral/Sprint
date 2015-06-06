@@ -85,6 +85,29 @@ public class Car implements Disposable{
 		return body.getAngle();
 	}
 	
+	public Car(World world, int x, int y){
+		this.world = world;
+		BodyDef def = new BodyDef();
+		def.type = BodyDef.BodyType.DynamicBody;		
+		def.position.set(new Vector2(x, y));
+		body = world.createBody(def);
+		body.setUserData(this);
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(4.5f, 2.5f);
+		fdef.shape = shape;
+		fdef.density = 1f;
+		fdef.restitution = 0.1f;
+		fdef.friction = 1f;		
+		body.createFixture(fdef);
+		body.setUserData(this);
+		shape.dispose();
+		carSprite = Color.valueOf("Red").getTex();
+		carSprite.setSize(10, 5);
+		carSprite.setOriginCenter();
+		
+	}
+	
 	public Car(Race race, PlayerControls controls)
 	{	
 		this.world = race.getWorld();
@@ -107,7 +130,8 @@ public class Car implements Disposable{
 		Color color = Color.valueOf(controls.getColor());
 		carSprite = color.getTex(); 
 		carSprite.setSize(10, 5);
-		carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
+		//carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
+		carSprite.setOriginCenter();
 		
 		
 		
@@ -171,6 +195,7 @@ public class Car implements Disposable{
 		
 		carSprite.setPosition(body.getPosition().x - (carSprite.getWidth()/2.0f), body.getPosition().y - (carSprite.getHeight()/2.0f));
 		carSprite.setRotation((float) ((float) body.getAngle()*180f/Math.PI));
+		//carSprite.setScale(1.0f+(float)(Math.abs(Math.sin(getAngle()))*0.55f), 1.0f-(float)(Math.abs(Math.sin(getAngle()))*0.15f));
 
 	}
 	

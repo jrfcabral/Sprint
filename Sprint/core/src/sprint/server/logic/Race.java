@@ -46,16 +46,20 @@ public class Race implements ContactListener, State{
 		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
-		track.addSegment(0, 0, 200, 0);
-		track.addSegment(200, 0, 200, 200);
-		track.addSegment(200, 200, 0, 200);
-		track.addSegment(0, 200, 0, 0);
+		//track.addSegment(0, 0, -50, 50);
+		//track.addSegment(0, 200, -50, 50);
+		track.addSegment(0, 0, 350, 0);
+		track.addSegment(350, 0, 350, 350);
+		track.addSegment(350, 350, 0, 350);
+		track.addSegment(0, 350, 0, 0);
 		track.addSegment(40, 40, 160, 40);
 		track.addSegment(160, 40, 160, 160);
 		track.addSegment(160, 160, 40, 160);
 		track.addSegment(40, 160, 40, 40);
 		track.addFinishLine(120, 180, 125, 200);
 		track.apply();
+		
+		//track.addSegment(-100, -50, 100, -50);
 		
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
@@ -142,12 +146,12 @@ public class Race implements ContactListener, State{
 		}
 		
 		/*Engage testing sequence*/
-		if(Gdx.input.isKeyPressed(Keys.T)){
+		/*if(Gdx.input.isKeyPressed(Keys.T)){
 			testing = true;
 			Tests tests = new Tests(this);
 			tests.run();
 			testing = false;
-		}	
+		}*/	
 	}
 	
 	
@@ -243,7 +247,7 @@ public class Race implements ContactListener, State{
 	@Override
 	public void update() {
 		checkEnd();
-		if (false)
+		if (ended)
 			this.stateMachine.setState(new LobbyMenu(this.lobby, this.stateMachine));
 		
 	}

@@ -74,8 +74,7 @@ public class Game extends ApplicationAdapter {
 	public void handleInput(float deltaTime){			
 		if (state ==GameState.InGame)
 			if (Gdx.input.isKeyPressed(Keys.ESCAPE)){
-				state = GameState.Lobby;
-				//lobby.startTimer();
+				stateMachine.setState(race);
 			}
 	}
 	
