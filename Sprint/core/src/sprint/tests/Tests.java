@@ -61,6 +61,7 @@ public class Tests implements State, ContactListener{
 		
 		track = new Track(world);
 		track.addSegment(25, -50, 25, 50);
+		track.addFinishLine(-25, -25, -35, 25);
 		
 		throttle = false;
 		brake = false;
@@ -111,12 +112,13 @@ public class Tests implements State, ContactListener{
 		testStatArea.setText(passded + "\n" + failded);
 		
 		batch.setProjectionMatrix(camera.combined);
+		debugRenderer.render(world, camera.combined);
 		batch.begin();
 		testCar.getSprite().draw(batch);
 		batch.end();
 		testStat.draw();
 		testCar.update(throttle, brake, steer);
-		debugRenderer.render(world, camera.combined);
+		
 		world.step(1/60f, 6, 2);
 		
 	}
@@ -127,7 +129,8 @@ public class Tests implements State, ContactListener{
 		testBrake();
 		testTurnRight();
 		testTurnLeft();
-		testCollision();
+		testCollisionWall();
+		testCollisionFinish();
 	}
 	
 	public boolean testAccelerate(){
@@ -222,7 +225,7 @@ public class Tests implements State, ContactListener{
 	}
 	
 	
-	private boolean testCollision(){
+	private boolean testCollisionWall(){
 		testCar.setVelocity(0f);
 		testCar.update(false, false, Car.SteerDirection.SteerNone);
 		
@@ -248,6 +251,15 @@ public class Tests implements State, ContactListener{
 		}
 	}
 	
+	public boolean testCollisionFinish(){
+		testCar.setVelocity(30f);
+		testCar.setAngle(180); //In degrees
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		
+		
+		return true;
+	}
 
 	@Override
 	public void resize(int width, int height) {
@@ -257,8 +269,32 @@ public class Tests implements State, ContactListener{
 
 	@Override
 	public void beginContact(Contact contact) {
-		// TODO Auto-generated method stub
+		Car car;
+		Object a = contact.getFixtureA().getBody().getUserData();
+		Object b = contact.getFixtureB().getBody().getUserData();
+		if(a!= null && a.toString().equals("finish"))			
+			if(b != null && b instanceof Car)
+				car =(Car) contact.getFixtureB().getBody().getUserData();
+			else
+				return;
+		else if (b != null && b.toString().equals("finish"))
+			if(a != null && a instanceof Car)
+				car = (Car) contact.getFixtureB().getBody().getUserData();
+			else				
+				return;
+			
+				
+		else
+			return;
 		
+		if (car.getLinearVelocity().x > 0){
+			System.out.println("dei uma voltinha na minha lambreta");
+			car.incrementLap();
+		}
+		else{
+			System.out.println("desdei uma voltinha na minha lambreta");
+			car.decrementLap();
+		}
 	}
 
 	@Override

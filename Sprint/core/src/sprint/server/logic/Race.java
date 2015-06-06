@@ -48,6 +48,8 @@ public class Race implements ContactListener, State{
 		track = new Track(world);
 		//track.addSegment(0, 0, -50, 50);
 		//track.addSegment(0, 200, -50, 50);
+		track.addCurveLR(new Vector2(0, 0), new Vector2(0, 350), new Vector2(125, 125), 0, 20);
+		track.addCurveUD(new Vector2(0, 0), new Vector2(350, 0), new Vector2(125, 125), 0, 20);
 		track.addSegment(0, 0, 350, 0);
 		track.addSegment(350, 0, 350, 350);
 		track.addSegment(350, 350, 0, 350);

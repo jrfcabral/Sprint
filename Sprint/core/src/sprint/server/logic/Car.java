@@ -257,4 +257,7 @@ public class Car implements Disposable{
 		return this.playerControls.getId();
 	}
 	
+	public void setAngle(float angle){
+		body.setTransform(0f,  0f, ((float) (angle*Math.PI/180f)));
+	}
 }
