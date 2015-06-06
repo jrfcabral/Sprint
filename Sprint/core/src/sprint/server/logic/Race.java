@@ -177,8 +177,7 @@ public class Race implements ContactListener, State{
 		Object a = contact.getFixtureA().getBody().getUserData();
 		Object b = contact.getFixtureB().getBody().getUserData();
 		
-		if ( (a != null && a.toString().equals("oil")) || (b != null && b.toString().equals("oil"))){
-			Body target;
+		if ( (a != null && a.toString().equals("oil")) || (b != null && b.toString().equals("oil"))){			
 			if (a instanceof Car)
 				car = (Car) a;
 			else if (b instanceof Car)
