@@ -260,4 +260,7 @@ public class Car implements Disposable{
 	public void setAngle(float angle){
 		body.setTransform(0f,  0f, ((float) (angle*Math.PI/180f)));
 	}
+	public Vector2 getPosition(){
+		return this.body.getPosition();
+	}
 }

@@ -1,5 +1,7 @@
 package sprint.server.logic;
 
+import java.util.LinkedList;
+
 import sprint.server.gui.LobbyMenu;
 import sprint.server.gui.MainMenu;
 
@@ -14,25 +16,21 @@ public class Game extends ApplicationAdapter {
 		Main, Lobby, InGame
 	}
 	
+	
 	GameState state;
 	Race race;	
 	StateMachine stateMachine;
-	
-	
 	MainMenu main;
-	LobbyMenu lobbyMenu;
-	
+	LobbyMenu lobbyMenu;	
 	boolean pcControls;
 
 	@Override
 	public void create () {
-		//race = new Race();
+
 		stateMachine = new StateMachine();
 		state = GameState.Main;		
-		
 		pcControls = true;		
-		main = new MainMenu(stateMachine);
-		//lobbyMenu = new LobbyMenu(lobby, stateMachine);		
+		main = new MainMenu(stateMachine);		
 	}
 
 	@Override
@@ -40,32 +38,7 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stateMachine.update();
-		stateMachine.draw();
-		/*if(state == GameState.Main){
-			
-			main.draw();
-			if(main.isStartServer()){
-				lobby.startTimer();
-				state = GameState.Lobby;				
-					server.launchServer();
-			}
-		}
-		else if(state == GameState.Lobby){
-			lobbyMenu.draw();
-			if (lobby.getElapsed() == 5){
-				this.state = GameState.InGame;
-				lobby.stopTimer();
-				race = new Race();
-				this.startGame(lobby.getIdentifiers());
-			}
-		}
-		else if(state == GameState.InGame){
-			if(race.getEnded()){
-				state = GameState.Lobby;
-				lobby.startTimer();
-			}
-			race.draw();
-		}*/
+		stateMachine.draw();		
 	}
 	
 

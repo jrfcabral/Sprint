@@ -3,6 +3,7 @@ package sprint.server.logic;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Random;
 
 import sprint.server.gui.LobbyMenu;
 import sprint.server.logic.Game.GameState;
@@ -18,14 +19,22 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Race implements ContactListener, State{
+	private static final int OIL_DURATION = 10000;
+	private static final int OIL_SIZE = 2;
 	private static final int DIRECTION = 1;
 	private static final int LAP_NUMBER = 3;
 	private SpriteBatch batch;
@@ -35,11 +44,11 @@ public class Race implements ContactListener, State{
 	private Box2DDebugRenderer debugRenderer;
 	private CameraManager camManager;
 	private ArrayList<Car> cars;
-	private boolean testing;
 	private boolean ended;
 	private final StateMachine stateMachine;
 	private Lobby lobby;
-	
+	private ArrayList<Vector2> oilPoints;	
+		
 	public Race(StateMachine stateMachine, Lobby lobby){
 		this.lobby = lobby;
 		world  = new World(new Vector2(0,0), true);
@@ -60,13 +69,11 @@ public class Race implements ContactListener, State{
 		track.addSegment(40, 160, 40, 40);
 		track.addFinishLine(120, 180, 125, 200);
 		track.apply();
-		
-		//track.addSegment(-100, -50, 100, -50);
-		
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
 		camera.update();
+		oilPoints = new ArrayList<Vector2>();
 		
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
@@ -115,10 +122,7 @@ public class Race implements ContactListener, State{
 
 
 	public void handleInput(float deltaTime){
-		
-		
-		//Camera controls
-		//Movement
+	
 		if(Gdx.input.isKeyPressed(Keys.UP)){
 			camManager.setPosition(camManager.getPosition().x, camManager.getPosition().y + Settings.CAMERA_MOVE_SPEED * deltaTime);
 		}
@@ -146,14 +150,6 @@ public class Race implements ContactListener, State{
 				camManager.setTarget(cars.get(0).getSprite());
 			}
 		}
-		
-		/*Engage testing sequence*/
-		/*if(Gdx.input.isKeyPressed(Keys.T)){
-			testing = true;
-			Tests tests = new Tests(this);
-			tests.run();
-			testing = false;
-		}*/	
 	}
 	
 	
@@ -166,11 +162,7 @@ public class Race implements ContactListener, State{
 	
 	public World getWorld(){
 		return world;
-	}
-	
-	public static void main(){
-		Game game = new Game();		
-	}
+	}	
 	
 	 public void removeCar(Car car){
 		 this.cars.remove(car);
@@ -189,12 +181,12 @@ public class Race implements ContactListener, State{
 		Object b = contact.getFixtureB().getBody().getUserData();
 		if(a!= null && a.toString().equals("finish"))			
 			if(b != null && b instanceof Car)
-				car =(Car) contact.getFixtureB().getBody().getUserData();
+				car =(Car) b;
 			else
 				return;
 		else if (b != null && b.toString().equals("finish"))
 			if(a != null && a instanceof Car)
-				car = (Car) contact.getFixtureB().getBody().getUserData();
+				car = (Car) a;
 			else				
 				return;
 			
@@ -251,7 +243,40 @@ public class Race implements ContactListener, State{
 		checkEnd();
 		if (ended)
 			this.stateMachine.setState(new LobbyMenu(this.lobby, this.stateMachine));
-		
+		if (oilPoints.size() < 100){
+			Random rand = new Random();
+			this.oilPoints.add(this.cars.get(rand.nextInt(this.cars.size())).getPosition());			
+		}
+		Random rand = new Random();
+		if (rand.nextInt(10000) < 20){
+			Vector2 pos = this.oilPoints.get(rand.nextInt(this.oilPoints.size()));
+			createOil(pos);
+		}
+	}
+
+	private void createOil(Vector2 pos) {
+		BodyDef oild = new BodyDef();
+		oild.position.set(pos);
+		oild.type = BodyType.StaticBody;
+		final Body oil = this.world.createBody(oild);
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(OIL_SIZE, OIL_SIZE);
+		FixtureDef fdef = new FixtureDef();
+		fdef.isSensor = true;
+		fdef.restitution = 0f;
+		fdef.shape = shape;
+		oil.createFixture(fdef);
+		Thread t = new Thread(){
+			@Override
+			public void run(){
+				try {
+					Thread.sleep(OIL_DURATION);
+				} catch (InterruptedException e) {				
+				}
+				Race.this.world.destroyBody(oil);
+			}
+		};
+		t.start();
 	}
 
 	@Override

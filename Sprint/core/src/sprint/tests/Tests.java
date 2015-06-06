@@ -272,14 +272,19 @@ public class Tests implements State, ContactListener{
 		Car car;
 		Object a = contact.getFixtureA().getBody().getUserData();
 		Object b = contact.getFixtureB().getBody().getUserData();
+		if (a!=null)
+		System.out.println(a.getClass().getName());
+		if (b != null)
+		System.out.println(b.getClass().getName());
 		if(a!= null && a.toString().equals("finish"))			
 			if(b != null && b instanceof Car)
-				car =(Car) contact.getFixtureB().getBody().getUserData();
+				car =(Car) b;
 			else
 				return;
 		else if (b != null && b.toString().equals("finish"))
-			if(a != null && a instanceof Car)
-				car = (Car) contact.getFixtureB().getBody().getUserData();
+			if(a != null && a instanceof Car)				
+				car = (Car) a;
+			
 			else				
 				return;
 			
