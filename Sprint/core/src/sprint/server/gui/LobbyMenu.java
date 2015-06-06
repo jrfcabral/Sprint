@@ -80,7 +80,7 @@ public class LobbyMenu implements State {
 		
 		lobbyMenu.addActor(ip);
 		lobbyMenu.addActor(playerCounter);
-		
+		Gdx.input.setInputProcessor(lobbyMenu);
 		lobby.startTimer();
 		
 	}
