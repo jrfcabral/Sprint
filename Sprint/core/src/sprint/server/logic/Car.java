@@ -71,6 +71,7 @@ public class Car implements Disposable{
 	private PlayerControls playerControls;
 	private World world;
 	private int laps = 0;
+	private float linearFactor = 0.55f;
 	
 	public Vector2 getLinearVelocity(){
 		return body.getLinearVelocity();
@@ -187,9 +188,9 @@ public class Car implements Disposable{
 		}
 
 		if (!throttle && getVelocity() <0.5f)
-			body.setLinearVelocity(new Vector2(0,0));
+			body.setLinearVelocity(new Vector2(0,0));		
 		
-		linearizeVelocity(0.55f);
+		linearizeVelocity(linearFactor);
 		//System.out.println(this.getVelocity());
 		//System.out.println(getAngle());
 		
@@ -262,5 +263,15 @@ public class Car implements Disposable{
 	}
 	public Vector2 getPosition(){
 		return this.body.getPosition();
+	}
+	
+	public void applyOil(){
+		this.linearFactor = 1f;
+		new Thread(){
+			public void run(){
+				try {Thread.sleep(2000);} catch (InterruptedException e) {}
+				Car.this.linearFactor = 0.55f;
+			}
+		}.start();
 	}
 }

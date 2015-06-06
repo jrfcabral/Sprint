@@ -6,16 +6,13 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import sprint.server.gui.LobbyMenu;
-import sprint.server.logic.Game.GameState;
 import sprint.server.net.Lobby;
 import sprint.server.net.PlayerControls;
-import sprint.tests.Tests;
 import utils.CameraManager;
 import utils.Settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -29,10 +26,10 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Race implements ContactListener, State{
+	private static final int OIL_MAGNITUDE = 1000;
 	private static final int OIL_DURATION = 10000;
 	private static final int OIL_SIZE = 2;
 	private static final int DIRECTION = 1;
@@ -179,6 +176,19 @@ public class Race implements ContactListener, State{
 		Car car;
 		Object a = contact.getFixtureA().getBody().getUserData();
 		Object b = contact.getFixtureB().getBody().getUserData();
+		
+		if ( (a != null && a.toString().equals("oil")) || (b != null && b.toString().equals("oil"))){
+			Body target;
+			if (a instanceof Car)
+				car = (Car) a;
+			else if (b instanceof Car)
+				car = (Car) b;
+			else 
+				return;
+			car.applyOil();		
+		}
+		
+		
 		if(a!= null && a.toString().equals("finish"))			
 			if(b != null && b instanceof Car)
 				car =(Car) b;
@@ -188,8 +198,7 @@ public class Race implements ContactListener, State{
 			if(a != null && a instanceof Car)
 				car = (Car) a;
 			else				
-				return;
-			
+				return;				
 				
 		else
 			return;
@@ -259,20 +268,18 @@ public class Race implements ContactListener, State{
 		oild.position.set(pos);
 		oild.type = BodyType.StaticBody;
 		final Body oil = this.world.createBody(oild);
+		oil.setUserData(new String("oil"));
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(OIL_SIZE, OIL_SIZE);
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		fdef.restitution = 0f;
-		fdef.shape = shape;
+		fdef.shape = shape;		
 		oil.createFixture(fdef);
 		Thread t = new Thread(){
 			@Override
 			public void run(){
-				try {
-					Thread.sleep(OIL_DURATION);
-				} catch (InterruptedException e) {				
-				}
+				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Race.this.world.destroyBody(oil);
 			}
 		};
