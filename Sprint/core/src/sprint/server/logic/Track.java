@@ -80,7 +80,7 @@ public class Track{
 		
 	}
 	
-	public void addCurveLR(Vector2 p1, Vector2 p2, Vector2 p3, int num, int limiter){
+	public void addCurveLR(Vector2 p1, Vector2 p2, Vector2 p3, int num, int limiter){ //a la Scheme
 		if(num >= limiter){
 			return;
 		}
@@ -93,8 +93,6 @@ public class Track{
 			Vector2 p2a = new Vector2(p5.x, p2.y);
 			Vector2 p5a = new Vector2((p5.x+p2a.x)/2.0f, (p5.y+p2a.y)/2.0f);
 			
-			
-			//Vector2 p6 = new Vector2((p4.x+p5.x)/2.0f, (p4.y+p5.y)/2.0f);
 			this.addSegment((int)p1.x, (int)p1.y, (int)p4a.x, (int)p4a.y);
 			this.addSegment((int)p2.x, (int)p2.y, (int)p5a.x, (int)p5a.y);
 			addCurveLR(p4a, p5a, p3, ++num, limiter);
@@ -114,11 +112,9 @@ public class Track{
 			Vector2 p2a = new Vector2(p2.x, p5.y);
 			Vector2 p5a = new Vector2((p5.x+p2a.x)/2.0f, (p5.y+p2a.y)/2.0f);
 			
-			
-			//Vector2 p6 = new Vector2((p4.x+p5.x)/2.0f, (p4.y+p5.y)/2.0f);
 			this.addSegment((int)p1.x, (int)p1.y, (int)p4a.x, (int)p4a.y);
 			this.addSegment((int)p2.x, (int)p2.y, (int)p5a.x, (int)p5a.y);
-			addCurveLR(p4a, p5a, p3, ++num, limiter);
+			addCurveUD(p4a, p5a, p3, ++num, limiter);
 		}
 	}
 	
