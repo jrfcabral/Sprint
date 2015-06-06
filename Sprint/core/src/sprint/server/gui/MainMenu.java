@@ -59,8 +59,11 @@ public class MainMenu implements State {
 		tests = new TextButton("Tests", skin);
 		logo = new Sprite(new Texture("SuperSprintlogo.png"));
 		
+		logo.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.3f);
+		logo.setPosition(Gdx.graphics.getWidth()/2.0f-logo.getWidth()/2.0f, Gdx.graphics.getHeight()-logo.getHeight());
+		
 		startServer.setSize(Gdx.graphics.getWidth()*0.45f, Gdx.graphics.getHeight()*0.08f);
-		startServer.setPosition(Gdx.graphics.getWidth()/2.0f - startServer.getWidth()/2.0f, Gdx.graphics.getHeight()-250.0f);
+		startServer.setPosition(Gdx.graphics.getWidth()/2.0f - startServer.getWidth()/2.0f, logo.getY() - 100f);
 		startServer.addListener(new ClickListener(-1){
 			@Override
 			public void clicked(InputEvent event , float x, float y){
@@ -84,12 +87,6 @@ public class MainMenu implements State {
 				Gdx.app.exit();
 			}
 		});
-		
-		
-		
-		
-		logo.setSize(440.0f, 150.0f);
-		logo.setPosition(Gdx.graphics.getWidth()/2.0f - logo.getWidth()/2.0f, Gdx.graphics.getHeight() - 30.0f - logo.getHeight());
 		
 		
 		mainMenu.addActor(startServer);

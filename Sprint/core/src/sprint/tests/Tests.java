@@ -46,129 +46,6 @@ public class Tests implements State, ContactListener{
 	private Car.SteerDirection steer;
 	private int passed;
 	private int failed;
-	
-	/*public int passed;
-	public int failed;
-	public Car car;
-	public Race race;
-	
-	public Tests(Race race){
-		passed = 0;
-		failed = 0;
-		this.race = race;
-		car = race.getCar();
-	}
-	
-	public void run(){
-		if(testAccelerate()){
-			passed++;
-		}
-		else{
-			failed++;
-		}
-		
-		if(testBrake()){
-			passed++;
-		}
-		else{
-			failed++;
-		}
-		
-		if(testTurnLeft()){
-			passed++;
-		}
-		else{
-			failed++;
-		}
-		
-		if(testTurnRight()){
-			passed++;
-		}
-		else{
-			failed++;
-		}
-		
-		System.out.print("Passed: " + passed + "\nFailed: " + failed + "\n");
-	}
-	
-	private boolean testAccelerate(){
-		car.setVelocity(0);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		for(int i = 0; i < 10; i++){
-			car.update(true, false, Car.SteerDirection.SteerNone);
-			race.getWorld().step(1/60f, 6, 2);
-		}
-		if(car.getVelocity() <= 0){
-			System.out.println("Accelerate test failed.");
-			return false;
-		}
-		else{
-			return true;
-		}
-		
-	}
-	
-	private boolean testBrake(){
-		car.setVelocity(0f);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		car.setVelocity(30);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		for(int i = 0; i < 10; i++){
-			car.update(false, true, Car.SteerDirection.SteerNone);
-			race.getWorld().step(1/60f, 6, 2);
-		}
-		
-		if(car.getVelocity() >= 30){
-			System.out.println("Brake test failed");
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private boolean testTurnLeft(){
-		car.setVelocity(0f);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		car.setVelocity(1.0f);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		float oldAng = car.getAngle();
-		
-		for(int i = 0; i < 10; i++){
-			car.update(false, false, Car.SteerDirection.SteerLeft);
-			race.getWorld().step(1/60f, 6, 2);
-		}
-		
-		if(car.getAngle() >= oldAng){
-			System.out.println("Turn Left test failed.");
-			return false;
-		}
-		else return true;
-	}
-	
-	private boolean testTurnRight(){
-		car.setVelocity(0f);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		car.setVelocity(1.0f);
-		car.update(false, false, Car.SteerDirection.SteerNone);
-		
-		float oldAng = car.getAngle();
-		
-		for(int i = 0; i < 10; i++){
-			car.update(false, false, Car.SteerDirection.SteerRight);
-			race.getWorld().step(1/60f, 6, 2);
-		}
-		
-		if(car.getAngle() <= oldAng){
-			return false;
-		}
-		else return true;
-	}*/
 
 	public Tests(StateMachine machine){
 		world = new World(new Vector2(0, 0), true);
@@ -240,20 +117,21 @@ public class Tests implements State, ContactListener{
 		testStat.draw();
 		testCar.update(throttle, brake, steer);
 		debugRenderer.render(world, camera.combined);
-		//world.step(1/60f, 6, 2);
+		world.step(1/60f, 6, 2);
 		
 	}
 	
 	
-	public void runTests(){
-		if(testAccelerate())
-			passed++;
-		else
-			failed++;
+	public void runTests(){	
+		testAccelerate();
+		testBrake();
+		testTurnRight();
+		testTurnLeft();
+		testCollision();
 	}
 	
 	public boolean testAccelerate(){
-		testCar.setVelocity(0);
+		testCar.setVelocity(0f);
 		testCar.update(false, false, Car.SteerDirection.SteerNone);
 		
 		for(int i = 0; i < 10; i++){
@@ -262,19 +140,113 @@ public class Tests implements State, ContactListener{
 		}
 		if(testCar.getVelocity() <= 0){
 			System.out.println("Accelerate test failed.");
+			failed++;
 			return false;
 		}
 		else{
+			passed++;
 			return true;
 		}
 	}
 	
 	
 	
+	private boolean testBrake(){
+		testCar.setVelocity(0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		testCar.setVelocity(30);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		for(int i = 0; i < 10; i++){
+			testCar.update(false, true, Car.SteerDirection.SteerNone);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(testCar.getVelocity() >= 30){
+			System.out.println("Brake test failed");
+			failed++;
+			return false;
+		}
+		passed++;
+		return true;
+	}
+	
+	private boolean testTurnLeft(){
+		testCar.setVelocity(0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		testCar.setVelocity(1.0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		float oldAng = testCar.getAngle();
+		
+		for(int i = 0; i < 10; i++){
+			testCar.update(false, false, Car.SteerDirection.SteerLeft);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(testCar.getAngle() >= oldAng){
+			System.out.println("Turn Left test failed.");
+			failed++;
+			return false;
+		}
+		else{
+			passed++;
+			return true;
+		}
+	}
+	
+	private boolean testTurnRight(){
+		testCar.setVelocity(0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		testCar.setVelocity(1.0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		float oldAng = testCar.getAngle();
+		
+		for(int i = 0; i < 10; i++){
+			testCar.update(false, false, Car.SteerDirection.SteerRight);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(testCar.getAngle() <= oldAng){
+			failed++;
+			return false;
+		}
+		else{
+			passed++;
+			return true;
+		}
+	}
 	
 	
-	
-	
+	private boolean testCollision(){
+		testCar.setVelocity(0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		testCar.setVelocity(50.0f);
+		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		
+		float oldDir = testCar.getLinearVelocity().x;
+		
+		for(int i = 0; i < 10; i++){
+			testCar.update(false, false, Car.SteerDirection.SteerNone);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(oldDir == testCar.getLinearVelocity().x){
+			failed++;
+			testCar.setVelocity(0f);
+			return false;
+		}
+		else{
+			passed++;
+			testCar.setVelocity(0f);
+			return true;
+		}
+	}
 	
 
 	@Override

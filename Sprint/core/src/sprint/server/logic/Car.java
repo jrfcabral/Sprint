@@ -85,7 +85,7 @@ public class Car implements Disposable{
 		return body.getAngle();
 	}
 	
-	public Car(World world, int x, int y){
+	public Car(World world, int x, int y){ //Used for tests
 		this.world = world;
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
@@ -220,7 +220,7 @@ public class Car implements Disposable{
 		float sideprod = (sideDir.x*currVelocity.x+sideDir.y*currVelocity.y)*factor;
 		//System.out.println(forwardDir.x*currVelocity.x+forwardDir.y*currVelocity.y);
 		body.setLinearVelocity(forwardDir.x*dotprod+sideprod*sideDir.x, forwardDir.y*dotprod+sideprod*sideDir.y);
-
+		
 		//System.out.println("out"+body.getLinearVelocity());
 				
 	}
