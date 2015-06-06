@@ -82,5 +82,10 @@ public class MainMenu implements State {
 		Gdx.input.setInputProcessor(mainMenu);
 		
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		mainMenu.getViewport().update(width, height, true);
+	}
 	
 }

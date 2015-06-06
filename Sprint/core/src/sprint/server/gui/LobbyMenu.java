@@ -84,5 +84,10 @@ public class LobbyMenu implements State {
 		lobby.startTimer();
 		
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		
+	}
 	
 }
