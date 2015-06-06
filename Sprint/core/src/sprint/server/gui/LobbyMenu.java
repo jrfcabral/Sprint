@@ -22,6 +22,7 @@ public class LobbyMenu implements State {
 	private Sprite lobbyLogo;
 	private TextArea ip;
 	private TextArea playerCounter;
+	private TextArea info;
 	private Lobby lobby;
 	private final StateMachine state;
 	
@@ -36,13 +37,29 @@ public class LobbyMenu implements State {
 	}
 	
 	public void draw(){
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0.66f, 0.66f, 0.66f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		lobbyMenu.getBatch().begin();
 		lobbyLogo.draw(lobbyMenu.getBatch());
 		lobbyMenu.getBatch().end();
 		lobbyMenu.draw();
-		playerCounter.setText("Players: \n" + Integer.toString( lobby.getQueueSize())  + "/" + Lobby.MAX_PLAYERS);
+		//playerCounter.setText("Players: \n" + Integer.toString( lobby.getQueueSize())  + "/" + Lobby.MAX_PLAYERS);
+		String ip;
+		try {
+			ip = "Server IP: " + InetAddress.getLocalHost().getHostAddress().toString();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			ip = "Server IP: N/A";
+		}
+		String players = "Players: " + Integer.toString(lobby.getQueueSize()) + "/" + Lobby.MAX_PLAYERS;
+		String startTime;
+		if(lobby.getQueueSize() > 0){
+			startTime = "Time to start: " +  (lobby.READY_TIMER - lobby.getElapsed());
+		}
+		else{
+			startTime = "Time to start: N/A";
+		}
+		info.setText(ip + "\n\n" + players + "\n\n" + startTime);
 		
 	}
 
@@ -65,7 +82,7 @@ public class LobbyMenu implements State {
 		lobbySkin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		lobbyLogo = new Sprite(new Texture("SuperSprintlogo.png"));
 		try {
-			ip = new TextArea(InetAddress.getLocalHost().toString(),lobbySkin);
+			ip = new TextArea("Server IP: " + InetAddress.getLocalHost().getHostAddress().toString(),lobbySkin);
 		} catch (UnknownHostException e) {
 			ip = new TextArea("Nenhum IP", lobbySkin);			
 		}
@@ -79,8 +96,28 @@ public class LobbyMenu implements State {
 		ip.setSize(Gdx.graphics.getWidth()*0.3f, Gdx.graphics.getHeight()*0.2f);
 		ip.setPosition(Gdx.graphics.getWidth()/1.4f-Gdx.graphics.getWidth()/1.4f, Gdx.graphics.getHeight()-Gdx.graphics.getHeight()*0.5f);
 		
-		lobbyMenu.addActor(ip);
-		lobbyMenu.addActor(playerCounter);
+		String ip;
+		try {
+			ip = "Server IP: " + InetAddress.getLocalHost().getHostAddress().toString();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			ip = "Server IP: N/A";
+		}
+		String players = "Players: " + Integer.toString(lobby.getQueueSize()) + "/" + Lobby.MAX_PLAYERS;
+		String startTime;
+		if(lobby.getQueueSize() > 0){
+			startTime = "Time to start: " +  (lobby.READY_TIMER - lobby.getElapsed());
+		}
+		else{
+			startTime = "Time to start: N/A";
+		}
+		
+		info = new TextArea(ip + "\n\n" + players + "\n\n" + startTime, lobbySkin);
+		info.setSize(Gdx.graphics.getWidth()*0.4f, Gdx.graphics.getHeight()*0.25f);
+		info.setPosition(Gdx.graphics.getWidth()/2.0f - info.getWidth()/2.0f, Gdx.graphics.getHeight()/2.0f - info.getHeight()/1.7f);
+		//lobbyMenu.addActor(ip);
+		//lobbyMenu.addActor(playerCounter);
+		lobbyMenu.addActor(info);
 		Gdx.input.setInputProcessor(lobbyMenu);
 		lobby.startTimer();
 		

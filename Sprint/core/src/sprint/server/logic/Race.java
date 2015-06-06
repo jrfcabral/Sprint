@@ -99,9 +99,9 @@ public class Race implements ContactListener, State{
 
 	public void startGame(LinkedList<String> identifiers) {
 		String[] colors = new String[]{"Red", "Blue", "Green", "Pink", "Orange"};
-		int i = 0;
+		int i = identifiers.size()-1;
 		for (String id : identifiers){
-			PlayerControls controls = new PlayerControls(id, stateMachine.getServer(), colors[i++]);
+			PlayerControls controls = new PlayerControls(id, stateMachine.getServer(), colors[i--]);
 			Car car = new Car(this, controls);
 			addCar(car);
 		}		
