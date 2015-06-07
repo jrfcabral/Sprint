@@ -6,10 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import sprint.server.gui.ScoreMenu;
 import sprint.server.net.Lobby;
 import sprint.server.net.PlayerControls;
+import sun.awt.Mutex;
 import utils.CameraManager;
 import utils.Settings;
 
@@ -53,8 +55,10 @@ public class Race implements ContactListener, State{
 	private LinkedList<String> positions;
 	private LinkedList<Body> deleteQueue;
 	private Box2DDebugRenderer debugRenderer;
+	private Semaphore semOil;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
+		semOil = new Semaphore(1, false);
 		this.lobby = lobby;
 		this.deleteQueue = new LinkedList<Body>();
 		world  = new World(new Vector2(0,0), true);
@@ -137,7 +141,8 @@ public class Race implements ContactListener, State{
 			batch.begin();
 			batch.draw(trackTex, -400, -400, 800, 800);
 			batch.end();
-			synchronized(oilSprites){
+			try {
+				semOil.acquire();
 				while(it.hasNext()){
 					Car car = it.next();
 					batch.begin();
@@ -145,18 +150,24 @@ public class Race implements ContactListener, State{
 					batch.end();
 					car.update();
 					if (!car.getAlive())
-						it.remove();
+						it.remove();					
 				}
-			}
+				while(itt.hasNext()){
+					Sprite oil = itt.next();
+					batch.begin();
+					oil.draw(batch);
+					batch.end();
+				}
+			} catch (InterruptedException e) {
+				
+			}	
 			
-			while(itt.hasNext()){
-				Sprite oil = itt.next();
-				batch.begin();
-				oil.draw(batch);
-				batch.end();
-			}
-							
-			
+
+			finally{
+				semOil.release();
+			}		
+						
+
 			debugRenderer.render(world, camera.combined);		
 			
 			handleInput(Gdx.graphics.getDeltaTime());
@@ -164,6 +175,7 @@ public class Race implements ContactListener, State{
 			world.step(1/60f, 6, 2);
 			
 			
+
 			checkEnd();
 		}
 		
@@ -374,18 +386,37 @@ public class Race implements ContactListener, State{
 		blotch.setSize(OIL_SIZE*2,  OIL_SIZE*2);
 		blotch.setPosition(pos.x - (blotch.getWidth()/2.0f),  pos.y - (blotch.getHeight()/2.0f));
 		blotch.setRotation((float)(oild.angle*Math.PI/180f));
-		synchronized(oilSprites){
+		try {
+			semOil.acquire();
 			oilSprites.add(blotch);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		finally{
+			semOil.release();
+		}
+			
+		
 		
 		Thread t = new Thread(){
 			@Override
 			public void run(){
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Race.this.deleteQueue.add(oil);
-				synchronized(oilSprites){
+				try {
+					semOil.acquire();
 					oilSprites.remove(blotch);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+				finally
+				{
+					semOil.release();
+				}
+					
+				
 			}
 		};
 		t.start();
