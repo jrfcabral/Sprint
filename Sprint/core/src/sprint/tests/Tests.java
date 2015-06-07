@@ -67,7 +67,9 @@ public class Tests implements State, ContactListener{
 		
 		track = new Track(world);
 		track.addSegment(25, -50, 25, 50);
-		track.addFinishLine(-25, -25, -35, 25);		
+		track.addFinishLine(-25, -25, -35, 25);
+		
+		
 		
 		throttle = false;
 		brake = false;
@@ -121,8 +123,6 @@ public class Tests implements State, ContactListener{
 		batch.setProjectionMatrix(camera.combined);
 		debugRenderer.render(world, camera.combined);
 		batch.begin();
-		
-		//batch.draw(trackTex, -400, -400, 800, 800);
 	
 		testCar.getSprite().draw(batch);
 		batch.end();

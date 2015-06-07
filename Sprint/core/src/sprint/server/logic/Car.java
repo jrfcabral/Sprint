@@ -109,7 +109,7 @@ public class Car {
 		body.setUserData(this);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(4.5f, 2.5f);
+		shape.setAsBox(9f, 5f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0.1f;
@@ -118,7 +118,7 @@ public class Car {
 		body.setUserData(this);
 		shape.dispose();
 		carSprite = Color.valueOf(color).getTex();
-		carSprite.setSize(10, 5);
+		carSprite.setSize(20, 10);
 		carSprite.setOriginCenter();
 		
 	}
