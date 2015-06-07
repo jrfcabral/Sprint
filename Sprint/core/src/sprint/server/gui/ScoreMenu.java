@@ -1,6 +1,8 @@
 package sprint.server.gui;
 
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,6 +26,9 @@ public class ScoreMenu implements State {
 	private TextButton nextButton;
 	private LinkedList<String> positionList;
 	private String position;
+	private final static int TIMEOUT = 10;
+	private int timer = TIMEOUT;
+	private Timer clock;
 	
 	private Lobby lobby;
 	private StateMachine stateMachine;
@@ -36,12 +41,15 @@ public class ScoreMenu implements State {
 	}
 	@Override
 	public void update() {
+		if (timer < 0)
+			this.stateMachine.setState(new LobbyMenu(this.lobby,this.stateMachine));
 		
 
 	}
 
 	@Override
 	public void create() {
+	
 		position = new String();
 		generateScores();
 		scoreMenu = new Stage();
@@ -61,9 +69,9 @@ public class ScoreMenu implements State {
 		nextButton = new TextButton("Continue", scoreSkin);
 		nextButton.addListener(new ClickListener(-1){
 			@Override
-			public void clicked(InputEvent event , float x, float y){
-				ScoreMenu.this.stateMachine.getServer().launchServer();
+			public void clicked(InputEvent event , float x, float y){				
 				ScoreMenu.this.stateMachine.setState(new LobbyMenu(ScoreMenu.this.stateMachine.getLobby(), ScoreMenu.this.stateMachine));
+				ScoreMenu.this.clock.cancel();
 			}
 		});
 		
@@ -71,7 +79,10 @@ public class ScoreMenu implements State {
 		nextButton.setSize(Gdx.graphics.getWidth()*0.45f, Gdx.graphics.getHeight()*0.08f);
 		nextButton.setPosition(Gdx.graphics.getWidth()/2.0f - nextButton.getWidth()/2.0f, nextButton.getHeight()/2.0f);
 		scoreMenu.addActor(nextButton);
+		Gdx.input.setInputProcessor(scoreMenu);
 		
+		clock = new Timer();
+		clock.scheduleAtFixedRate(new TimerUpdate(), 0, 1000);		
 	}
 
 	@Override
@@ -93,6 +104,15 @@ public class ScoreMenu implements State {
 			this.position += i + ") " + positionList.get(i-1) + "\n";
 			i++;
 		}
+	}
+	
+	private class TimerUpdate extends TimerTask{
+		@Override
+		public synchronized void run() {
+			ScoreMenu.this.timer--;
+			//System.out.println(Lobby.this.elapsed);
+		}
+		
 	}
 
 
