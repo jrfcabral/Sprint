@@ -63,6 +63,7 @@ public class Tests implements State, ContactListener{
 		track.addSegment(25, -50, 25, 50);
 		track.addFinishLine(-25, -25, -35, 25);
 		
+		
 		throttle = false;
 		brake = false;
 		steer = Car.SteerDirection.SteerNone;
@@ -88,8 +89,8 @@ public class Tests implements State, ContactListener{
 			}
 		});
 		
-		testStat.addActor(testStatArea);
-		testStat.addActor(back);
+		//testStat.addActor(testStatArea);
+		//testStat.addActor(back);
 		
 		Gdx.input.setInputProcessor(testStat);
 		

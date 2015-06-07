@@ -17,6 +17,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -37,6 +38,7 @@ public class Race implements ContactListener, State{
 	private static final int OIL_SIZE = 2;
 	private static final int DIRECTION = 1;
 	private static final int LAP_NUMBER = 3;
+	private Texture trackTex;
 	private SpriteBatch batch;
 	private World world;
 	private Track track;
@@ -55,9 +57,11 @@ public class Race implements ContactListener, State{
 		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
+		trackTex = new Texture("Track01.png");
+		
 		//track.addSegment(0, 0, -50, 50);
 		//track.addSegment(0, 200, -50, 50);
-		track.addCurveLR(new Vector2(0, 0), new Vector2(0, 350), new Vector2(125, 125), 0, 20);
+		/*track.addCurveLR(new Vector2(0, 0), new Vector2(0, 350), new Vector2(125, 125), 0, 20);
 		track.addCurveUD(new Vector2(0, 0), new Vector2(350, 0), new Vector2(125, 125), 0, 20);
 		track.addSegment(0, 0, 350, 0);
 		track.addSegment(350, 0, 350, 350);
@@ -68,7 +72,26 @@ public class Race implements ContactListener, State{
 		track.addSegment(160, 160, 40, 160);
 		track.addSegment(40, 160, 40, 40);
 		track.addFinishLine(120, 180, 125, 200);
-		track.apply();
+		track.apply();*/
+		track.addSegment(-175, -175, 175, -175);
+		track.addSegment(-175, 175, 175, 175);
+		track.addSegment(-175, -175, -175, 175);
+		track.addSegment(175, -175, 175, 175);
+		track.addCurveLR(new Vector2(-150, -175), new Vector2(-175, -125), new Vector2(-175, -125), 0, 50);
+		track.addCurveLR(new Vector2(-150, 175), new Vector2(-175, 125), new Vector2(-175, 125), 0, 50);
+		track.addCurveLR(new Vector2(150, -175), new Vector2(175, -125), new Vector2(175, -125), 0, 50);
+		track.addCurveLR(new Vector2(150, 175), new Vector2(175, 125), new Vector2(175, 125), 0, 50);
+		
+		track.addSegment(-88, -88, 88, -88);
+		track.addSegment(-88, 88, 88, 88);
+		track.addSegment(-100, -55, -100, 55);
+		track.addSegment(100, -55, 100, 55);
+		track.addCurveLR(new Vector2(-85, -88), new Vector2(-88, -85), new Vector2(-100, -50), 0, 50);
+		track.addCurveLR(new Vector2(-85, 88), new Vector2(-88, 85), new Vector2(-100, 50), 0, 50);
+		track.addCurveLR(new Vector2(85, -88), new Vector2(88, -85), new Vector2(100, -50), 0, 50);
+		track.addCurveLR(new Vector2(85, 88), new Vector2(88, 85), new Vector2(100, 50), 0, 50);
+		
+		track.addFinishLine(0, 132, 10, 175);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
@@ -90,6 +113,7 @@ public class Race implements ContactListener, State{
 			while(it.hasNext()){
 				Car car = it.next();
 				batch.begin();
+				batch.draw(trackTex, -202, -226, 400, 459);
 				car.getSprite().draw(batch);
 				batch.end();
 				car.update();
@@ -98,7 +122,7 @@ public class Race implements ContactListener, State{
 			}
 							
 			
-			debugRenderer.render(world, camera.combined);		
+			//debugRenderer.render(world, camera.combined);		
 			
 			handleInput(Gdx.graphics.getDeltaTime());
 			
