@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Disposable;
 /**
  * Represents a car inside the game logic.
  */
-public class Car implements Disposable{
+public class Car {
 	private static final int OIL_DURATION = 2000;
 	public static enum SteerDirection {
 		SteerLeft, SteerRight, SteerNone;
@@ -286,7 +286,6 @@ public class Car implements Disposable{
 	/**
 	 * Disposes of the car in terms of its physical representation in the simulator
 	 */
-	@Override
 	public void dispose() {	
 		this.world.destroyBody(this.body);		
 	}

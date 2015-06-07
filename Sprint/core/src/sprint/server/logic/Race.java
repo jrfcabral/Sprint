@@ -46,10 +46,13 @@ public class Race implements ContactListener, State{
 	private Lobby lobby;
 	private ArrayList<Vector2> oilPoints;	
 	private LinkedList<String> positions;
+	private LinkedList<Body> deleteQueue;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
 		this.lobby = lobby;
+		this.deleteQueue = new LinkedList<Body>();
 		world  = new World(new Vector2(0,0), true);
+		world.setContinuousPhysics(true);
 		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
@@ -256,8 +259,7 @@ public class Race implements ContactListener, State{
 				oneEnded = true;
 				if (!car.isDone())
 				positions.add(car.getColor());
-				car.setDone(true);
-				car.dispose();				
+				car.setDone(true);								
 			}
 			else{
 				allEnded = false;
@@ -293,6 +295,12 @@ public class Race implements ContactListener, State{
 			Vector2 pos = this.oilPoints.get(rand.nextInt(this.oilPoints.size()));
 			createOil(pos);
 		}
+		
+		for(Body body: deleteQueue)
+		{
+			this.world.destroyBody(body);
+			deleteQueue.removeFirstOccurrence(body);
+		}
 	}
 	/**
 	 * Creates an oil splatter at the target position, and generates a thread to remove it.
@@ -315,7 +323,7 @@ public class Race implements ContactListener, State{
 			@Override
 			public void run(){
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
-				Race.this.world.destroyBody(oil);
+				Race.this.deleteQueue.add(oil);
 			}
 		};
 		t.start();
