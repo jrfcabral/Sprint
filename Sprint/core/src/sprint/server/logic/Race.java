@@ -15,11 +15,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -41,12 +43,14 @@ public class Race implements ContactListener, State{
 	private OrthographicCamera camera;	
 	private CameraManager camManager;
 	private ArrayList<Car> cars;
+	private ArrayList<Sprite> oils;
 	private boolean ended;
 	private final StateMachine stateMachine;
 	private Lobby lobby;
 	private ArrayList<Vector2> oilPoints;	
 	private LinkedList<String> positions;
 	private LinkedList<Body> deleteQueue;
+	private Box2DDebugRenderer debugRenderer;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
 		this.lobby = lobby;
@@ -58,7 +62,6 @@ public class Race implements ContactListener, State{
 		track = new Track(world);
 
 		trackTex = new Texture("Track01.png");
-	
 		track.addSegment(-175, -175, 175, -175);
 		track.addSegment(-175, 175, 175, 175);
 		track.addSegment(-175, -175, -175, 175);
@@ -78,7 +81,7 @@ public class Race implements ContactListener, State{
 		track.addCurveLR(new Vector2(85, 88), new Vector2(88, 85), new Vector2(100, 50), 0, 50);
 		
 		track.addFinishLine(0, 132, 10, 175);
-		
+		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
 		camera.update();
@@ -86,6 +89,7 @@ public class Race implements ContactListener, State{
 		positions = new LinkedList<String>();
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
+		oils = new ArrayList<Sprite>();
 		ended = false;
 		this.stateMachine = stateMachine;
 	}
@@ -99,6 +103,7 @@ public class Race implements ContactListener, State{
 			batch.setProjectionMatrix(camera.combined);
 			
 			ListIterator<Car> it = cars.listIterator();
+			ListIterator<Sprite> itt= oils.listIterator();
 			while(it.hasNext()){
 				Car car = it.next();
 				batch.begin();
@@ -109,15 +114,22 @@ public class Race implements ContactListener, State{
 				if (!car.getAlive())
 					it.remove();
 			}
+			
+			while(itt.hasNext()){
+				Sprite oil = itt.next();
+				batch.begin();
+				oil.draw(batch);
+				batch.end();
+			}
 							
 			
-			//debugRenderer.render(world, camera.combined);		
+			debugRenderer.render(world, camera.combined);		
 			
 			handleInput(Gdx.graphics.getDeltaTime());
 			
 			world.step(1/60f, 6, 2);
 			
-			/*Isto tem q ser posto noutro sitio depois (maybe ?)*/
+			
 			checkEnd();
 		}
 		
@@ -270,7 +282,7 @@ public class Race implements ContactListener, State{
 			return;
 		}
 		else if(oneEnded){
-			/*run 30 sec timer to end game?*/
+			
 		}
 	}
 
@@ -319,11 +331,20 @@ public class Race implements ContactListener, State{
 		fdef.restitution = 0f;
 		fdef.shape = shape;		
 		oil.createFixture(fdef);
+		final Sprite blotch = new Sprite(new Texture("oil.png"));
+		
+		blotch.setOriginCenter();
+		blotch.setSize(OIL_SIZE+2,  OIL_SIZE+2);
+		blotch.setPosition(pos.x - (blotch.getWidth()/2.0f),  pos.y - (blotch.getHeight()/2.0f));
+		blotch.setRotation((float)(oild.angle*Math.PI/180f));
+		oils.add(blotch);
+		
 		Thread t = new Thread(){
 			@Override
 			public void run(){
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Race.this.deleteQueue.add(oil);
+				oils.remove(blotch);
 			}
 		};
 		t.start();
