@@ -38,7 +38,7 @@ public class Race implements ContactListener, State{
 	private static final int OIL_DURATION = 10000;
 	private static final int OIL_SIZE = 4;
 	private static final int DIRECTION = 1;
-	private static final int LAP_NUMBER = 3;
+	private static final int LAP_NUMBER = 1;
 	private Texture trackTex;
 
 	private SpriteBatch batch;
@@ -55,10 +55,10 @@ public class Race implements ContactListener, State{
 	private LinkedList<String> positions;
 	private LinkedList<Body> deleteQueue;
 	private Box2DDebugRenderer debugRenderer;
-	private Semaphore semOil;
+	private Semaphore sem;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
-		semOil = new Semaphore(1, false);
+		sem = new Semaphore(1, false);
 		this.lobby = lobby;
 		this.deleteQueue = new LinkedList<Body>();
 		world  = new World(new Vector2(0,0), true);
@@ -142,7 +142,7 @@ public class Race implements ContactListener, State{
 			batch.draw(trackTex, -400, -400, 800, 800);
 			batch.end();
 			try {
-				semOil.acquire();
+				sem.acquire();
 				while(it.hasNext()){
 					Car car = it.next();
 					batch.begin();
@@ -164,7 +164,7 @@ public class Race implements ContactListener, State{
 			
 
 			finally{
-				semOil.release();
+				sem.release();
 			}		
 						
 
@@ -314,12 +314,26 @@ public class Race implements ContactListener, State{
 	private void checkEnd(){
 		boolean oneEnded = false;
 		boolean allEnded = true;
-		for(Car car: cars){
+		ListIterator<Car> it = cars.listIterator();
+		while(it.hasNext()){
+			Car car = it.next();
 			if(car.getLaps() >= LAP_NUMBER){
 				oneEnded = true;
 				if (!car.isDone())
-				positions.add(car.getColor());
-				car.setDone(true);								
+					positions.add(car.getColor());
+				car.setDone(true);
+				try {
+					sem.acquire();
+					cars.remove(car);
+					world.destroyBody(car.getBody());
+					it = cars.listIterator();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				finally{
+					sem.release();
+				}
 			}
 			else{
 				allEnded = false;
@@ -330,7 +344,14 @@ public class Race implements ContactListener, State{
 			return;
 		}
 		else if(oneEnded){
-			
+			Thread t = new Thread(){
+				@Override
+				public void run(){
+					try {Thread.sleep(30000);} catch (InterruptedException e) {}
+					ended = true;
+				}
+			};
+			t.start();
 		}
 	}
 
@@ -387,14 +408,14 @@ public class Race implements ContactListener, State{
 		blotch.setPosition(pos.x - (blotch.getWidth()/2.0f),  pos.y - (blotch.getHeight()/2.0f));
 		blotch.setRotation((float)(oild.angle*Math.PI/180f));
 		try {
-			semOil.acquire();
+			sem.acquire();
 			oilSprites.add(blotch);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		finally{
-			semOil.release();
+			sem.release();
 		}
 			
 		
@@ -405,7 +426,7 @@ public class Race implements ContactListener, State{
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Race.this.deleteQueue.add(oil);
 				try {
-					semOil.acquire();
+					sem.acquire();
 					oilSprites.remove(blotch);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -413,7 +434,7 @@ public class Race implements ContactListener, State{
 				}
 				finally
 				{
-					semOil.release();
+					sem.release();
 				}
 					
 				

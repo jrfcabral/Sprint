@@ -340,4 +340,8 @@ public class Car {
 	public String getColor(){
 		return this.playerControls.getColor();
 	}
+	
+	public Body getBody(){
+		return this.body;
+	}
 }
