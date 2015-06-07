@@ -32,7 +32,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Race implements ContactListener, State{
 	private static final int OIL_DURATION = 10000;
-	private static final int OIL_SIZE = 2;
+	private static final int OIL_SIZE = 4;
 	private static final int DIRECTION = 1;
 	private static final int LAP_NUMBER = 3;
 	private Texture trackTex;
@@ -62,25 +62,26 @@ public class Race implements ContactListener, State{
 		track = new Track(world);
 
 		trackTex = new Texture("Track01.png");
-		track.addSegment(-350, -350, 350, -350);
-		track.addSegment(-350, 350, 350, 350);
+		track.addSegment(-350, -310, 350, -310);
+		track.addSegment(-350, 300, 350, 300);
 		track.addSegment(-350, -350, -350, 350);
-		track.addSegment(350, -350, 350, 350);
-		track.addCurveLR(new Vector2(-150, -350), new Vector2(-350, -125), new Vector2(-350, -125), 0, 50);
-		track.addCurveLR(new Vector2(-150, 350), new Vector2(-350, 125), new Vector2(-350, 125), 0, 50);
-		track.addCurveLR(new Vector2(150, -350), new Vector2(350, -125), new Vector2(350, -125), 0, 50);
-		track.addCurveLR(new Vector2(150, 350), new Vector2(350, 125), new Vector2(350, 125), 0, 50);
+		track.addSegment(352, -350, 352, 350);
+		track.addCurveLR(new Vector2(-300, -310), new Vector2(-350, -200), new Vector2(-350, -200), 0, 50);
+		track.addCurveLR(new Vector2(-300, 300), new Vector2(-350, 200), new Vector2(-350, 200), 0, 50);
+		track.addCurveLR(new Vector2(300, -310), new Vector2(350, -230), new Vector2(350, -230), 0, 50);
+		track.addCurveLR(new Vector2(300, 310), new Vector2(355, 200), new Vector2(355, 200), 0, 50);
 		
-		track.addSegment(-176, -176, 176, -176);
-		track.addSegment(-176, 176, 176, 176);
-		track.addSegment(-100, -55, -100, 55);
-		track.addSegment(100, -55, 100, 55);
-		track.addCurveLR(new Vector2(-85, -176), new Vector2(-176, -85), new Vector2(-100, -50), 0, 50);
-		track.addCurveLR(new Vector2(-85, 176), new Vector2(-176, 85), new Vector2(-100, 50), 0, 50);
-		track.addCurveLR(new Vector2(85, -176), new Vector2(176, -85), new Vector2(100, -50), 0, 50);
-		track.addCurveLR(new Vector2(85, 176), new Vector2(176, 85), new Vector2(100, 50), 0, 50);
+		track.addSegment(-170, -158, 176, -158);
+		track.addSegment(-170, 146, 176, 146);
+		track.addSegment(-195, -110, -195, 100);
+		track.addSegment(200, -110, 200, 100);
+		track.addCurveLR(new Vector2(-165, -158), new Vector2(-195, -110), new Vector2(-195, -110), 0, 50);
+		track.addCurveLR(new Vector2(-165, 148), new Vector2(-195, 100), new Vector2(-195, 100), 0, 50);
+		track.addCurveLR(new Vector2(170, -158), new Vector2(200, -100), new Vector2(200, -110), 0, 50);
+		track.addCurveLR(new Vector2(170, 148), new Vector2(200, 100), new Vector2(200, 100), 0, 50);
 		
-		track.addFinishLine(0, 132, 10, 350);
+		track.addFinishLine(5, 223, 25,148);
+		
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
@@ -106,7 +107,7 @@ public class Race implements ContactListener, State{
 			ListIterator<Sprite> itt= oils.listIterator();
 			
 			batch.begin();
-			batch.draw(trackTex, -202, -226, 400, 459);
+			batch.draw(trackTex, -400, -400, 800, 800);
 			batch.end();
 			
 			while(it.hasNext()){
@@ -127,7 +128,7 @@ public class Race implements ContactListener, State{
 			}
 							
 			
-			debugRenderer.render(world, camera.combined);		
+			//debugRenderer.render(world, camera.combined);		
 			
 			handleInput(Gdx.graphics.getDeltaTime());
 			
@@ -145,9 +146,11 @@ public class Race implements ContactListener, State{
 	public void startGame(LinkedList<String> identifiers) {
 		String[] colors = new String[]{"Red", "Blue", "Green", "Pink", "Orange"};
 		int i = identifiers.size()-1;
+		int x = -20, y = 150;
 		for (String id : identifiers){
 			PlayerControls controls = new PlayerControls(id, stateMachine.getServer(), colors[i--]);
-			Car car = new Car(this, controls);
+			Car car = new Car(this, controls, x, y);
+			x += 20;
 			addCar(car);
 		}		
 	}
@@ -309,6 +312,7 @@ public class Race implements ContactListener, State{
 		Random rand = new Random();
 		if (rand.nextInt(10000) < 20){
 			Vector2 pos = this.oilPoints.get(rand.nextInt(this.oilPoints.size()));
+			
 			createOil(pos);
 		}
 		
@@ -338,7 +342,7 @@ public class Race implements ContactListener, State{
 		final Sprite blotch = new Sprite(new Texture("oil.png"));
 		
 		blotch.setOriginCenter();
-		blotch.setSize(OIL_SIZE+2,  OIL_SIZE+2);
+		blotch.setSize(OIL_SIZE*2,  OIL_SIZE*2);
 		blotch.setPosition(pos.x - (blotch.getWidth()/2.0f),  pos.y - (blotch.getHeight()/2.0f));
 		blotch.setRotation((float)(oild.angle*Math.PI/180f));
 		oils.add(blotch);

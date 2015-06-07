@@ -3,6 +3,7 @@ package sprint.tests;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -50,6 +51,8 @@ public class Tests implements State, ContactListener{
 	private int failed;
 	
 
+	private Texture trackTex;
+	
 	public Tests(StateMachine machine){
 		world = new World(new Vector2(0, 0), true);
 		batch = new SpriteBatch();
@@ -64,8 +67,7 @@ public class Tests implements State, ContactListener{
 		
 		track = new Track(world);
 		track.addSegment(25, -50, 25, 50);
-		track.addFinishLine(-25, -25, -35, 25);
-		
+		track.addFinishLine(-25, -25, -35, 25);		
 		
 		throttle = false;
 		brake = false;
@@ -119,11 +121,14 @@ public class Tests implements State, ContactListener{
 		batch.setProjectionMatrix(camera.combined);
 		debugRenderer.render(world, camera.combined);
 		batch.begin();
+		
+		//batch.draw(trackTex, -400, -400, 800, 800);
+	
 		testCar.getSprite().draw(batch);
 		batch.end();
 		testStat.draw();
 		testCar.update(throttle, brake, steer);
-		
+		debugRenderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
 		
 	}

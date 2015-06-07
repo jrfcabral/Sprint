@@ -123,17 +123,17 @@ public class Car {
 		
 	}
 	
-	public Car(Race race, PlayerControls controls)
+	public Car(Race race, PlayerControls controls, int x, int y)
 	{	
 		this.world = race.getWorld();
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
-		def.position.set(new Vector2(20,150));
+		def.position.set(new Vector2(x, y));
 		body = world.createBody(def);
 		body.setUserData(this);
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(4.5f, 2.5f);
+		shape.setAsBox(9f, 5f);
 		fdef.shape = shape;
 		fdef.density = 1f;
 		fdef.restitution = 0.1f;
@@ -144,7 +144,7 @@ public class Car {
 		playerControls = controls;
 		Color color = Color.valueOf(controls.getColor());
 		carSprite = color.getTex(); 
-		carSprite.setSize(10, 5);
+		carSprite.setSize(20, 10);
 		//carSprite.setOrigin(carSprite.getWidth()/2.0f,  carSprite.getHeight()/2.0f);
 		carSprite.setOriginCenter();
 		
@@ -199,10 +199,10 @@ public class Car {
 		}
 			
 		else if (throttle){
-			if(this.getVelocity() < 100f)
-				body.applyForce(new Vector2(650,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
-			if(this.getVelocity() < 50f)
-				body.applyForce(new Vector2(650,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			if(this.getVelocity() < 300f)
+				body.applyForce(new Vector2(1050,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+			if(this.getVelocity() < 150f)
+				body.applyForce(new Vector2(1150,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 		}
 
 		if (!throttle && getVelocity() <0.5f)
