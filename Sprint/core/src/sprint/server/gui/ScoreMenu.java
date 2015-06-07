@@ -69,7 +69,7 @@ public class ScoreMenu implements State {
 		
 
 		nextButton.setSize(Gdx.graphics.getWidth()*0.45f, Gdx.graphics.getHeight()*0.08f);
-		nextButton.setPosition(Gdx.graphics.getWidth()/2.0f - nextButton.getWidth()/2.0f, nextButton.getY() - 100.0f);
+		nextButton.setPosition(Gdx.graphics.getWidth()/2.0f - nextButton.getWidth()/2.0f, nextButton.getHeight()/2.0f);
 		scoreMenu.addActor(nextButton);
 		
 	}

@@ -226,10 +226,12 @@ public class Race implements ContactListener, State{
 		boolean oneEnded = false;
 		boolean allEnded = true;
 		for(Car car: cars){
-			if(car.getLaps() == LAP_NUMBER){
-				oneEnded = true;		
+			if(car.getLaps() >= LAP_NUMBER){
+				oneEnded = true;
+				if (!car.isDone())
 				positions.add(car.getColor());
-				car.dispose();
+				car.setDone(true);
+				car.dispose();				
 			}
 			else{
 				allEnded = false;
