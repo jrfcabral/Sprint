@@ -1,7 +1,9 @@
 package sprint.server.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
@@ -43,7 +45,7 @@ public class Race implements ContactListener, State{
 	private OrthographicCamera camera;	
 	private CameraManager camManager;
 	private ArrayList<Car> cars;
-	private ArrayList<Sprite> oils;
+	private List<Sprite> oilSprites;
 	private boolean ended;
 	private final StateMachine stateMachine;
 	private Lobby lobby;
@@ -90,7 +92,7 @@ public class Race implements ContactListener, State{
 		positions = new LinkedList<String>();
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
-		oils = new ArrayList<Sprite>();
+		oilSprites = Collections.synchronizedList(new ArrayList<Sprite>());
 		ended = false;
 		this.stateMachine = stateMachine;
 	}
@@ -104,20 +106,21 @@ public class Race implements ContactListener, State{
 			batch.setProjectionMatrix(camera.combined);
 			
 			ListIterator<Car> it = cars.listIterator();
-			ListIterator<Sprite> itt= oils.listIterator();
+			ListIterator<Sprite> itt= oilSprites.listIterator();
 			
 			batch.begin();
 			batch.draw(trackTex, -400, -400, 800, 800);
 			batch.end();
-			
-			while(it.hasNext()){
-				Car car = it.next();
-				batch.begin();
-				car.getSprite().draw(batch);
-				batch.end();
-				car.update();
-				if (!car.getAlive())
-					it.remove();
+			synchronized(oilSprites){
+				while(it.hasNext()){
+					Car car = it.next();
+					batch.begin();
+					car.getSprite().draw(batch);
+					batch.end();
+					car.update();
+					if (!car.getAlive())
+						it.remove();
+				}
 			}
 			
 			while(itt.hasNext()){
@@ -345,14 +348,18 @@ public class Race implements ContactListener, State{
 		blotch.setSize(OIL_SIZE*2,  OIL_SIZE*2);
 		blotch.setPosition(pos.x - (blotch.getWidth()/2.0f),  pos.y - (blotch.getHeight()/2.0f));
 		blotch.setRotation((float)(oild.angle*Math.PI/180f));
-		oils.add(blotch);
+		synchronized(oilSprites){
+			oilSprites.add(blotch);
+		}
 		
 		Thread t = new Thread(){
 			@Override
 			public void run(){
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Race.this.deleteQueue.add(oil);
-				oils.remove(blotch);
+				synchronized(oilSprites){
+					oilSprites.remove(blotch);
+				}
 			}
 		};
 		t.start();
