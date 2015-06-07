@@ -62,25 +62,25 @@ public class Race implements ContactListener, State{
 		track = new Track(world);
 
 		trackTex = new Texture("Track01.png");
-		track.addSegment(-175, -175, 175, -175);
-		track.addSegment(-175, 175, 175, 175);
-		track.addSegment(-175, -175, -175, 175);
-		track.addSegment(175, -175, 175, 175);
-		track.addCurveLR(new Vector2(-150, -175), new Vector2(-175, -125), new Vector2(-175, -125), 0, 50);
-		track.addCurveLR(new Vector2(-150, 175), new Vector2(-175, 125), new Vector2(-175, 125), 0, 50);
-		track.addCurveLR(new Vector2(150, -175), new Vector2(175, -125), new Vector2(175, -125), 0, 50);
-		track.addCurveLR(new Vector2(150, 175), new Vector2(175, 125), new Vector2(175, 125), 0, 50);
+		track.addSegment(-350, -350, 350, -350);
+		track.addSegment(-350, 350, 350, 350);
+		track.addSegment(-350, -350, -350, 350);
+		track.addSegment(350, -350, 350, 350);
+		track.addCurveLR(new Vector2(-150, -350), new Vector2(-350, -125), new Vector2(-350, -125), 0, 50);
+		track.addCurveLR(new Vector2(-150, 350), new Vector2(-350, 125), new Vector2(-350, 125), 0, 50);
+		track.addCurveLR(new Vector2(150, -350), new Vector2(350, -125), new Vector2(350, -125), 0, 50);
+		track.addCurveLR(new Vector2(150, 350), new Vector2(350, 125), new Vector2(350, 125), 0, 50);
 		
-		track.addSegment(-88, -88, 88, -88);
-		track.addSegment(-88, 88, 88, 88);
+		track.addSegment(-176, -176, 176, -176);
+		track.addSegment(-176, 176, 176, 176);
 		track.addSegment(-100, -55, -100, 55);
 		track.addSegment(100, -55, 100, 55);
-		track.addCurveLR(new Vector2(-85, -88), new Vector2(-88, -85), new Vector2(-100, -50), 0, 50);
-		track.addCurveLR(new Vector2(-85, 88), new Vector2(-88, 85), new Vector2(-100, 50), 0, 50);
-		track.addCurveLR(new Vector2(85, -88), new Vector2(88, -85), new Vector2(100, -50), 0, 50);
-		track.addCurveLR(new Vector2(85, 88), new Vector2(88, 85), new Vector2(100, 50), 0, 50);
+		track.addCurveLR(new Vector2(-85, -176), new Vector2(-176, -85), new Vector2(-100, -50), 0, 50);
+		track.addCurveLR(new Vector2(-85, 176), new Vector2(-176, 85), new Vector2(-100, 50), 0, 50);
+		track.addCurveLR(new Vector2(85, -176), new Vector2(176, -85), new Vector2(100, -50), 0, 50);
+		track.addCurveLR(new Vector2(85, 176), new Vector2(176, 85), new Vector2(100, 50), 0, 50);
 		
-		track.addFinishLine(0, 132, 10, 175);
+		track.addFinishLine(0, 132, 10, 350);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
@@ -107,7 +107,7 @@ public class Race implements ContactListener, State{
 			while(it.hasNext()){
 				Car car = it.next();
 				batch.begin();
-				batch.draw(trackTex, -202, -226, 400, 459);
+				batch.draw(trackTex, -400, -400, 800, 800);
 				car.getSprite().draw(batch);
 				batch.end();
 				car.update();
