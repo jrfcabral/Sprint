@@ -8,11 +8,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+/**
+ * This class is responsible for handling the communication protocol with the client, as well as configuring and handling socket input and output
+ */
 public class Server {
 	private Thread thread;
 	private Lobby lobby;
 	private HashMap<String, PlayerControls> bindings;
 	
+	/**
+	 * Exception throw by the server when a new server tries to be created if one is still running.
+	 */
 	public class ServerRunningException extends RuntimeException{
 		private static final long serialVersionUID = -8926610866812393171L;}	
 	
@@ -114,6 +120,9 @@ public class Server {
 		thread = new Thread(new ServerThread());
 		this.bindings = new HashMap<String, PlayerControls>();
 	}
+	/**
+	 * Launches the server thread and listens for incoming connections
+	 */
 	public void launchServer() {
 		if (!thread.isAlive()){			
 			thread.start();
@@ -121,12 +130,23 @@ public class Server {
 		else
 			throw new Server.ServerRunningException();
 	}
+	
+	/**
+	 * Binds the identifier of a player to its player controls. From now on any commands received from the identifier are forwarded to the given player controls
+	 * Identifiers who are not bound have their commands ignored.
+	 * @param identifier
+	 * @param playerControls
+	 */
 	public void bindId(String identifier, PlayerControls playerControls) {	
 		System.out.println("Binding " + identifier);
 		this.bindings.put(identifier, playerControls);
 		if (this.bindings.get(identifier) == null)
 			throw new IllegalArgumentException();
 	}
+	/**
+	 * Removes the binding between the identifier and the associated player controls.
+	 * @param identifier
+	 */
 	public void unbindId(String identifier){
 		PlayerControls controls = bindings.get(identifier);
 		if(controls == null)
@@ -135,6 +155,9 @@ public class Server {
 		this.bindings.remove(identifier, controls);
 	}
 	
+	/**
+	 * @return a map that holds all currently active bindings between an identifier and the associated playercontrols.
+	 */
 	public HashMap<String, PlayerControls> getMap(){
 		return this.bindings;
 	}

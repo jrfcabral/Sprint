@@ -2,7 +2,14 @@ package sprint.server.net;
 
 import sprint.server.logic.Car;
 
+/**
+ * The class responsible for transmitting player commands to the cars
+  */
 public class PlayerControls {
+	/**
+	 *Enumerates the various commands that the player can give, and translates them from the strings sent from the remote application to the server 
+	 *
+	 */
 	public enum Command{
 		BRAKE{
 			public void handleCommand(PlayerControls controls){
@@ -45,6 +52,10 @@ public class PlayerControls {
 		LEAVE {			
 			public void handleCommand(PlayerControls controls) {controls.setActive(false);};
 		};
+		/**
+		 * 
+		 * @param controls Takes an incoming command and updates the internal state of the player controls 
+		 */
 		public abstract void handleCommand(PlayerControls controls);
 	}
 	private boolean throttle;
@@ -54,25 +65,25 @@ public class PlayerControls {
 	private String color;
 	private boolean active;
 	/**
-	 * @return the active
+	 * @return true if the player is connected, false if they left
 	 */
 	public boolean isActive() {
 		return active;
 	}
 	/**
-	 * @param active the active to set
+	 * @param active true if the player is connected, false if they left
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 	/**
-	 * @param throttle the throttle to set
+	 * @param throttle true if the player is throttling the car, false otherwise
 	 */
 	public void setThrottle(boolean throttle) {
 		this.throttle = throttle;
 	}
 	/**
-	 * @param brake the brake to set
+	 * @param brake true if the player is braking, false otherwise
 	 */
 	public void setBrake(boolean brake) {
 		this.brake = brake;
@@ -83,14 +94,30 @@ public class PlayerControls {
 	public void setSteer(Car.SteerDirection steer) {
 		this.steer = steer;
 	}
+	/**
+	 * 
+	 * @return true if the player is throttling the car, false otherwise.
+	 */
 	public boolean getThrottle(){return throttle;};
+	/**
+	 * 
+	 * @return the direction of the player is steering the car in
+	 */
 	public Car.SteerDirection getSteer(){return steer;};	
+	/**
+	 * @return true if player is breaking the car, false otherwise.
+	 */
 	public boolean getBrake(){return brake;};
-	
+	/**
+	 * @return the identifier of the player who is associated with this control
+	 */
 	public String getId(){
 		return this.id;
 	}
 	
+	/**
+	 * @return the car color the player is currently controlling
+	 */
 	public String getColor(){
 		return color;
 	}
