@@ -274,4 +274,7 @@ public class Car implements Disposable{
 			}
 		}.start();
 	}
+	public String getColor(){
+		return this.playerControls.getColor();
+	}
 }

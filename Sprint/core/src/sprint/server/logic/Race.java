@@ -6,6 +6,7 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import sprint.server.gui.LobbyMenu;
+import sprint.server.gui.ScoreMenu;
 import sprint.server.net.Lobby;
 import sprint.server.net.PlayerControls;
 import utils.CameraManager;
@@ -33,7 +34,7 @@ public class Race implements ContactListener, State{
 	private static final int OIL_DURATION = 10000;
 	private static final int OIL_SIZE = 2;
 	private static final int DIRECTION = 1;
-	private static final int LAP_NUMBER = 3;
+	private static final int LAP_NUMBER = 1;
 	private SpriteBatch batch;
 	private World world;
 	private Track track;
@@ -45,6 +46,7 @@ public class Race implements ContactListener, State{
 	private final StateMachine stateMachine;
 	private Lobby lobby;
 	private ArrayList<Vector2> oilPoints;	
+	private LinkedList<String> positions;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
 		this.lobby = lobby;
@@ -52,10 +54,10 @@ public class Race implements ContactListener, State{
 		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
-		//track.addSegment(0, 0, -50, 50);
-		//track.addSegment(0, 200, -50, 50);
-		track.addCurveLR(new Vector2(0, 0), new Vector2(0, 350), new Vector2(125, 125), 0, 20);
-		track.addCurveUD(new Vector2(0, 0), new Vector2(350, 0), new Vector2(125, 125), 0, 20);
+		track.addSegment(0, 0, -50, 50);
+		track.addSegment(0, 200, -50, 50);
+		//track.addCurveLR(new Vector2(0, 0), new Vector2(0, 350), new Vector2(125, 125), 0, 20);
+		//track.addCurveUD(new Vector2(0, 0), new Vector2(350, 0), new Vector2(125, 125), 0, 20);
 		track.addSegment(0, 0, 350, 0);
 		track.addSegment(350, 0, 350, 350);
 		track.addSegment(350, 350, 0, 350);
@@ -71,7 +73,7 @@ public class Race implements ContactListener, State{
 		camera.position.set(0, 0, 0);
 		camera.update();
 		oilPoints = new ArrayList<Vector2>();
-		
+		positions = new LinkedList<String>();
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
 		ended = false;
@@ -225,9 +227,9 @@ public class Race implements ContactListener, State{
 		boolean allEnded = true;
 		for(Car car: cars){
 			if(car.getLaps() == LAP_NUMBER){
-				if(!oneEnded){
-					oneEnded = true;
-				}
+				oneEnded = true;		
+				positions.add(car.getColor());
+				car.dispose();
 			}
 			else{
 				allEnded = false;
@@ -250,7 +252,7 @@ public class Race implements ContactListener, State{
 	public void update() {
 		checkEnd();
 		if (ended)
-			this.stateMachine.setState(new LobbyMenu(this.lobby, this.stateMachine));
+			this.stateMachine.setState(new ScoreMenu(this.positions, this.lobby, this.stateMachine));
 		if (oilPoints.size() < 100){
 			Random rand = new Random();
 			this.oilPoints.add(this.cars.get(rand.nextInt(this.cars.size())).getPosition());			
