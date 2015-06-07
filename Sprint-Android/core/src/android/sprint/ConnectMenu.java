@@ -53,18 +53,11 @@ public class ConnectMenu {
 					reader = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
 					String test = "TEST\n";
 					testSocket.getOutputStream().write(test.getBytes());
-					testSocket.getOutputStream().flush();
+					testSocket.getOutputStream().flush();					
 					
-					//System.out.println(response);
-					
-					 /*if(response.equals("Received")){
-						 ack = true;
-					 }*/
 				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				
@@ -74,7 +67,7 @@ public class ConnectMenu {
 					String[] tokens = response.split(" ");
 					
 					System.out.println(response);
-					if(tokens[0].equals("Received")){ //to be changed
+					if(tokens[0].equals("Received")){
 						 if(!tokens[1].equals("Full")){
 							 color = tokens[1];
 							 ack = true;
@@ -83,7 +76,6 @@ public class ConnectMenu {
 						 
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				finally{
@@ -94,16 +86,7 @@ public class ConnectMenu {
 	                    catch(IOException e){
 	                        e.printStackTrace();
 	                    }
-	                }
-	                
-	                /*if(dis != null){
-	                	try{
-	                        dis.close();
-	                    }
-	                    catch(IOException e){
-	                        e.printStackTrace();
-	                    }
-	                }*/
+	                }	     
 				}
 			}
 		});
