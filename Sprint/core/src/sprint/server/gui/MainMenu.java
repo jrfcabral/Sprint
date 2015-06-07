@@ -5,7 +5,6 @@ import sprint.server.logic.StateMachine;
 import sprint.tests.Tests;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+/**
+* Represents the Main Menu that is show to the server user
+*/
 public class MainMenu implements State {
 	private Stage mainMenu;
 	private Skin skin;
@@ -29,6 +31,10 @@ public class MainMenu implements State {
 		this.stateMachine = stateMachine;
 	}
 	
+	/**
+	 * Draws the current status of the main menu, using the appopriate libgdx methods.
+	 * Draws the logo sprite.
+	 */
 	public void draw(){
 		Gdx.gl.glClearColor(0.66f, 0.66f, 0.66f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -38,10 +44,18 @@ public class MainMenu implements State {
 		mainMenu.draw();
 	}
 	
+	/**
+	 * 
+	 * @return true if the server start button is pressed, false otherwise
+	 */
 	public boolean isStartServer(){
 		return startServer.isPressed();
 	}
 
+	/**
+	 * Polls for input and updates the internal state of the menu
+	 * May trigger a state change 
+	 */
 	@Override
 	public void update() {		
 		if (exit.isPressed())
@@ -50,6 +64,9 @@ public class MainMenu implements State {
 			stateMachine.setState(new MainMenu(stateMachine));
 	}
 
+	/**
+	 * Generates all the components of the Main Menu and sets listeners for input
+	 */
 	@Override
 	public void create() {
 	 	mainMenu = new Stage();
@@ -97,6 +114,9 @@ public class MainMenu implements State {
 		
 	}
 
+	/**
+	 * Called when the window is resized by the user, this method prepares the internal state of the Menu for resizing
+	 */
 	@Override
 	public void resize(int width, int height) {
 		mainMenu.getViewport().update(width, height, true);

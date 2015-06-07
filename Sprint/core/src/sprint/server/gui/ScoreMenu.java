@@ -17,6 +17,9 @@ import sprint.server.logic.State;
 import sprint.server.logic.StateMachine;
 import sprint.server.net.Lobby;
 
+/**
+* Represents the Score Menu that is show to players when the race just ended 
+*/
 public class ScoreMenu implements State {
 
 	private Stage scoreMenu;
@@ -39,14 +42,19 @@ public class ScoreMenu implements State {
 		this.stateMachine = stateMachine;
 		create();
 	}
+	
+	/**
+	 * Polls for input and updates the internal state of the menu
+	 * May trigger a state change 
+	 */
 	@Override
 	public void update() {
 		if (timer < 0)
-			this.stateMachine.setState(new LobbyMenu(this.lobby,this.stateMachine));
-		
+			this.stateMachine.setState(new LobbyMenu(this.lobby,this.stateMachine));	}
 
-	}
-
+	/**
+	 * Generates all the components of the Score Menu and sets listeners for input
+	 */
 	@Override
 	public void create() {
 	
@@ -85,6 +93,9 @@ public class ScoreMenu implements State {
 		clock.scheduleAtFixedRate(new TimerUpdate(), 0, 1000);		
 	}
 
+	/**
+	 * Paints the components of the Score Menu on the screen.
+	 */
 	@Override
 	public void draw() {
 		Gdx.gl.glClearColor(0.66f, 0.66f, 0.66f, 1);
@@ -92,16 +103,20 @@ public class ScoreMenu implements State {
 		scoreMenu.draw();
 	}
 
+	/**
+	 * Prepares the Score Menu for user resizing the screen
+	 */
 	@Override
 	public void resize(int width, int height) {
 		scoreMenu.getViewport().update(width, height, true);
 
 	}
 	
+		
 	private void generateScores() {
 		int i = 1;
 		for(String color:positionList){
-			this.position += i + ") " + positionList.get(i-1) + "\n";
+			this.position += i + ") " + color + "\n";
 			i++;
 		}
 	}

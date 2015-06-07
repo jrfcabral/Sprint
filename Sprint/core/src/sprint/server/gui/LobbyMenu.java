@@ -16,6 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 
+/**
+* Represents the Lobby Menu that is show to players when they are getting ready to begin a race 
+*/
 public class LobbyMenu implements State {
 	private Stage lobbyMenu;
 	private Skin lobbySkin;
@@ -24,16 +27,28 @@ public class LobbyMenu implements State {
 	private Lobby lobby;
 	private final StateMachine state;
 	
+	/**
+	 * 
+	 * @return how much time has gone by since the lobby was full
+	 */
 	public int getLobbyElapsed(){
 		return lobby.getElapsed();
 	}
 	
+	/**
+	 * 
+	 * @param lobby the lobby associated with this lobby menu
+	 * @param state the context associated with the state machine
+	 */
 	public LobbyMenu(Lobby lobby, StateMachine state){
 		this.state = state;
 		this.lobby = lobby;
 		create();					
 	}
 	
+	/**
+	 * Draws the current status of the lobby menu, using the appopriate libgdx methods
+	 */
 	public void draw(){
 		Gdx.gl.glClearColor(0.66f, 0.66f, 0.66f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -51,7 +66,7 @@ public class LobbyMenu implements State {
 		String players = "Players: " + Integer.toString(lobby.getQueueSize()) + "/" + Lobby.MAX_PLAYERS;
 		String startTime;
 		if(lobby.getQueueSize() > 0){
-			startTime = "Time to start: " +  (lobby.READY_TIMER - lobby.getElapsed());
+			startTime = "Time to start: " +  (Lobby.READY_TIMER - lobby.getElapsed());
 		}
 		else{
 			startTime = "Time to start: N/A";
@@ -60,6 +75,10 @@ public class LobbyMenu implements State {
 		
 	}
 
+	/**
+	 * Polls for input and updates the internal state of the menu
+	 * May trigger a state change 
+	 */
 	@Override
 	public void update() {
 		if (lobby.getElapsed() > Lobby.READY_TIMER)
@@ -73,6 +92,9 @@ public class LobbyMenu implements State {
 		
 	}
 
+	/**
+	 * Generates all the components of the Lobby Menu and sets listeners for input
+	 */
 	@Override
 	public void create() {
 		lobbyMenu=new Stage();
@@ -92,7 +114,7 @@ public class LobbyMenu implements State {
 		String players = "Players: " + Integer.toString(lobby.getQueueSize()) + "/" + Lobby.MAX_PLAYERS;
 		String startTime;
 		if(lobby.getQueueSize() > 0){
-			startTime = "Time to start: " +  (lobby.READY_TIMER - lobby.getElapsed());
+			startTime = "Time to start: " +  (Lobby.READY_TIMER - lobby.getElapsed());
 		}
 		else{
 			startTime = "Time to start: N/A";
@@ -109,6 +131,9 @@ public class LobbyMenu implements State {
 		
 	}
 
+	/**
+	 * Called when the window is resized by the user, this method prepares the internal state of the Menu for resizing
+	 */
 	@Override
 	public void resize(int width, int height) {
 		

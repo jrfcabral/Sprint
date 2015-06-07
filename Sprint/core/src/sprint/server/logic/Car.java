@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Disposable;
  * Represents a car inside the game logic.
  */
 public class Car implements Disposable{
+	private static final int OIL_DURATION = 2000;
 	public static enum SteerDirection {
 		SteerLeft, SteerRight, SteerNone;
 	}
@@ -74,13 +75,13 @@ public class Car implements Disposable{
 
 	
 	/**
-	 * @return the done
+	 * @return true if this car is no longer in the race, false otherwise
 	 */
 	public boolean isDone() {
 		return done;
 	}
 	/**
-	 * @param done the done to set
+	 * @param done true to remove car from the race
 	 */
 	public void setDone(boolean done) {
 		this.done = done;
@@ -150,6 +151,10 @@ public class Car implements Disposable{
 		
 		
 	}
+	
+	/**
+	 * Checks the commands received via the internet and applies them to the car. Then simulates the physics of the car for the current timestep.
+	 */
 	public void update(){
 		if(!this.playerControls.isActive()){
 			this.dispose();
@@ -239,54 +244,100 @@ public class Car implements Disposable{
 				
 	}
 	
+	/**
+	 * Increments the number of laps this car has performed.
+	 * Should be called when the car crosses the finish line in the correct direction
+	 */
 	public void incrementLap(){
 		laps++;
 	}
+	/**
+	 * Decrementes the number of laps this car has performed.
+	 * Called when the car crosses the finish line in the wrong direction
+	 */
 	public void decrementLap(){
 		if(laps >0)
 			laps--;
 	}
 	
+	/**
+	 * 
+	 * @return the laps this car has performed
+	 */
 	public int getLaps(){
 		return this.laps;
 	}
 	
+	/**
+	 * 
+	 * @return the sprite that represents the car
+	 */
 	public Sprite getSprite(){
 		return this.carSprite;
 	}
-	
+	/**
+	 * Sets current linear velocity. Maintains the angle of the current movement.
+	 * @param vel the new velocity of the car
+	 */
 	public void setVelocity(float vel){
 		body.setLinearVelocity(vel*((float)Math.cos(getAngle())), vel*((float)Math.sin(getAngle())));
 	}
+	
+	/**
+	 * Disposes of the car in terms of its physical representation in the simulator
+	 */
 	@Override
 	public void dispose() {	
 		this.world.destroyBody(this.body);		
 	}
 	
+	/**
+	 * 
+	 * @return true if the player is still connected to the car, false otherwise
+	 */
 	public boolean getAlive(){
 		return this.playerControls.isActive();
 	}
 	
+	/**
+	 * 
+	 * @return the identifier of the device being used to control this car
+	 */
 	public String getIdentifier(){
 		return this.playerControls.getId();
 	}
 	
+	/**
+	 * 
+	 * @param angle the current angle of the car, in degrees
+	 */
 	public void setAngle(float angle){
 		body.setTransform(0f,  0f, ((float) (angle*Math.PI/180f)));
 	}
+	/**
+	 * 
+	 * @return the vector representing the position of the car in the world.
+	 */
 	public Vector2 getPosition(){
 		return this.body.getPosition();
 	}
 	
+	/**
+	 * Applies the effects of a oil slip to the car for the duration and then resets it to the normal status.
+	 */
 	public void applyOil(){
 		this.linearFactor = 1f;
 		new Thread(){
 			public void run(){
-				try {Thread.sleep(2000);} catch (InterruptedException e) {}
+				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
 				Car.this.linearFactor = 0.55f;
 			}
 		}.start();
 	}
+	
+	/**
+	 * @return the color of the car
+	 */
 	public String getColor(){
 		return this.playerControls.getColor();
 	}

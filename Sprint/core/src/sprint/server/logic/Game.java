@@ -1,7 +1,5 @@
 package sprint.server.logic;
 
-import java.util.LinkedList;
-
 import sprint.server.gui.LobbyMenu;
 import sprint.server.gui.MainMenu;
 
@@ -10,7 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 
-
+/**
+ * Represents the game application by itself. Holds the state machine and performs the main update and draw cycle on it. 
+ */
 public class Game extends ApplicationAdapter {
 	public static enum GameState{
 		Main, Lobby, InGame
@@ -24,6 +24,9 @@ public class Game extends ApplicationAdapter {
 	LobbyMenu lobbyMenu;	
 	boolean pcControls;
 
+	/**
+	 * Creates the state machine for the game and initializes it.
+	 */
 	@Override
 	public void create () {
 
@@ -33,6 +36,9 @@ public class Game extends ApplicationAdapter {
 		main = new MainMenu(stateMachine);		
 	}
 
+	/**
+	 * Asks the current state, via the state machine, to render itself on the screen and then to update itself.
+	 */
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -51,9 +57,11 @@ public class Game extends ApplicationAdapter {
 			}
 	}
 	
+	/**
+	 * Asks the current state to perform the appropriate actions when the user adjusts window size
+	 */
 	public void resize(int width, int height){
 		main.resize(width, height);
-		//lobbyMenu.resize(width, height);
 	}
 	
 	
