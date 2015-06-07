@@ -99,7 +99,7 @@ public class Car {
 		return body.getAngle();
 	}
 	
-	public Car(World world, int x, int y){ //Used for tests
+	public Car(World world, int x, int y, String color){ //Used for tests
 		done = false;
 		this.world = world;
 		BodyDef def = new BodyDef();
@@ -117,7 +117,7 @@ public class Car {
 		body.createFixture(fdef);
 		body.setUserData(this);
 		shape.dispose();
-		carSprite = Color.valueOf("Red").getTex();
+		carSprite = Color.valueOf(color).getTex();
 		carSprite.setSize(10, 5);
 		carSprite.setOriginCenter();
 		

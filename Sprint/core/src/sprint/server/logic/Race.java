@@ -104,10 +104,14 @@ public class Race implements ContactListener, State{
 			
 			ListIterator<Car> it = cars.listIterator();
 			ListIterator<Sprite> itt= oils.listIterator();
+			
+			batch.begin();
+			batch.draw(trackTex, -202, -226, 400, 459);
+			batch.end();
+			
 			while(it.hasNext()){
 				Car car = it.next();
 				batch.begin();
-				batch.draw(trackTex, -400, -400, 800, 800);
 				car.getSprite().draw(batch);
 				batch.end();
 				car.update();

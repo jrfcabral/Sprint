@@ -44,8 +44,11 @@ public class Tests implements State, ContactListener{
 	private boolean throttle;
 	private boolean brake;
 	private Car.SteerDirection steer;
+	private boolean ended;
+	private final int LAP_NUMBER = 3;
 	private int passed;
 	private int failed;
+	
 
 	public Tests(StateMachine machine){
 		world = new World(new Vector2(0, 0), true);
@@ -57,7 +60,7 @@ public class Tests implements State, ContactListener{
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);
 		camera.position.set(0, 0, 0);
 		camera.update();
-		testCar = new Car(world, 0, 0);
+		testCar = new Car(world, 0, 0, "Red");
 		
 		track = new Track(world);
 		track.addSegment(25, -50, 25, 50);
@@ -88,9 +91,10 @@ public class Tests implements State, ContactListener{
 				Tests.this.stateMachine.setState(new MainMenu(stateMachine));
 			}
 		});
+		ended = false;
 		
-		//testStat.addActor(testStatArea);
-		//testStat.addActor(back);
+		testStat.addActor(testStatArea);
+		testStat.addActor(back);
 		
 		Gdx.input.setInputProcessor(testStat);
 		
@@ -132,6 +136,7 @@ public class Tests implements State, ContactListener{
 		testTurnLeft();
 		testCollisionWall();
 		testCollisionFinish();
+		testMultipleCars();
 	}
 	
 	public boolean testAccelerate(){
@@ -232,15 +237,31 @@ public class Tests implements State, ContactListener{
 		
 		testCar.setVelocity(50.0f);
 		testCar.update(false, false, Car.SteerDirection.SteerNone);
-		
+		world.step(1/60f, 6, 2);
 		float oldDir = testCar.getLinearVelocity().x;
+		if(oldDir > 0){
+			oldDir = 1;
+		}
+		else{
+			oldDir = 0;
+		}
 		
-		for(int i = 0; i < 10; i++){
+		
+		for(int i = 0; i < 30; i++){
 			testCar.update(false, false, Car.SteerDirection.SteerNone);
 			world.step(1/60f, 6, 2);
 		}
 		
-		if(oldDir == testCar.getLinearVelocity().x){
+		float newDir =  testCar.getLinearVelocity().x;
+		if(newDir > 0){
+			newDir = 1;
+		}
+		else{
+			newDir = 0;
+		}
+		
+		
+		if(oldDir == newDir){
 			failed++;
 			testCar.setVelocity(0f);
 			return false;
@@ -253,13 +274,68 @@ public class Tests implements State, ContactListener{
 	}
 	
 	public boolean testCollisionFinish(){
-		testCar.setVelocity(30f);
+		testCar.setVelocity(-30f);
 		testCar.setAngle(180); //In degrees
+		int laps = testCar.getLaps();
+		for(int i = 0; i < 200; i++){
+			testCar.update(false, false, Car.SteerDirection.SteerNone);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(laps < testCar.getLaps()){
+			failed++;
+			testCar.setVelocity(0f);
+			return false;
+		}
+		testCar.setVelocity(30f);
+		testCar.setAngle(0);
+		
+		for(int i = 0; i < 10; i++){
+			testCar.update(false, false, Car.SteerDirection.SteerNone);
+			world.step(1/60f, 6, 2);
+		}
+		
+		if(laps == testCar.getLaps()){
+			passed++;
+			testCar.setVelocity(0f);
+			return true;
+		}
+		else{
+			failed++;
+			testCar.setVelocity(0f);
+			return false;
+		}
+		
+	}
+	
+	private boolean testMultipleCars(){
+		Car testCar2 = new Car(world, -150, -150, "Blue");
+		
+		testCar2.setAngle(testCar.getAngle());
+		testCar2.setAngle(90);
 		testCar.update(false, false, Car.SteerDirection.SteerNone);
+		testCar2.update(false, false, Car.SteerDirection.SteerNone);
+		world.step(1/60f, 6, 2);
 		
+		if(testCar.getAngle() == testCar2.getAngle()){
+			failed++;
+			testCar2.dispose();
+			return false;
+		}
 		
+		testCar2.setVelocity(30f);
+		testCar2.update(false, false, Car.SteerDirection.SteerNone);
+		if(testCar.getVelocity() == testCar2.getVelocity()){
+			failed++;
+			testCar2.dispose();
+			return false;
+		}
+		else{
+			passed++;
+			testCar2.dispose();
+			return true;
+		}
 		
-		return true;
 	}
 
 	@Override
