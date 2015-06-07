@@ -2,9 +2,6 @@ package sprint.server.logic;
 
 import sprint.server.net.PlayerControls;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -14,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 
 
@@ -71,8 +67,24 @@ public class Car implements Disposable{
 	private PlayerControls playerControls;
 	private World world;
 	private int laps = 0;
+
 	private float linearFactor = 0.55f;
+
+	private boolean done;
+
 	
+	/**
+	 * @return the done
+	 */
+	public boolean isDone() {
+		return done;
+	}
+	/**
+	 * @param done the done to set
+	 */
+	public void setDone(boolean done) {
+		this.done = done;
+	}
 	public Vector2 getLinearVelocity(){
 		return body.getLinearVelocity();
 	}
@@ -87,6 +99,7 @@ public class Car implements Disposable{
 	}
 	
 	public Car(World world, int x, int y){ //Used for tests
+		done = false;
 		this.world = world;
 		BodyDef def = new BodyDef();
 		def.type = BodyDef.BodyType.DynamicBody;		
