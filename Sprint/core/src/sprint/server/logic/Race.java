@@ -175,11 +175,11 @@ public class Race implements ContactListener, State{
 	public void startGame(LinkedList<String> identifiers) {
 		String[] colors = new String[]{"Red", "Blue", "Green", "Pink", "Orange"};
 		int i = identifiers.size()-1;
-		int x = -20, y = 150;
+		int x = 20, y = 180;
 		for (String id : identifiers){
 			PlayerControls controls = new PlayerControls(id, stateMachine.getServer(), colors[i--]);
 			Car car = new Car(this, controls, x, y);
-			x += 20;
+			y += 20;
 			addCar(car);
 		}		
 	}
