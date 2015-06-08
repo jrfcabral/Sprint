@@ -74,7 +74,7 @@ public class Server {
                 				break;
                 		}
                 		
-                		out.flush();
+                		out.flush();     
                 		 
                 		if(lobby.getQueueSize() < lobby.MAX_PLAYERS){
                 			lobby.addToQueue(socket.getInetAddress().toString());
