@@ -53,14 +53,16 @@ public class Race implements ContactListener, State{
 	private Lobby lobby;
 	private ArrayList<Vector2> oilPoints;	
 	private LinkedList<String> positions;
-	private LinkedList<Body> deleteQueue;
+	private LinkedList<Body> deleteQueueBody;
+	private LinkedList<Sprite> deleteQueueSprite;
 	private Box2DDebugRenderer debugRenderer;
 	private Semaphore sem;
 		
 	public Race(StateMachine stateMachine, Lobby lobby){
 		sem = new Semaphore(1, false);
 		this.lobby = lobby;
-		this.deleteQueue = new LinkedList<Body>();
+		this.deleteQueueBody = new LinkedList<Body>();
+		deleteQueueSprite = new LinkedList<Sprite>();
 		world  = new World(new Vector2(0,0), true);
 		world.setContinuousPhysics(true);
 		world.setContactListener(this);
@@ -88,7 +90,7 @@ public class Race implements ContactListener, State{
 			track.addCurveLR(new Vector2(170, -158), new Vector2(200, -100), new Vector2(200, -110), 0, 50);
 			track.addCurveLR(new Vector2(170, 148), new Vector2(200, 100), new Vector2(200, 100), 0, 50);
 			
-			track.addFinishLine(5, 223, 25,148);
+			track.addFinishLine(5, 223, 8,148);
 		}
 		else{
 			trackTex = new Texture("track02.png");
@@ -116,7 +118,7 @@ public class Race implements ContactListener, State{
 			track.addCurveLR(new Vector2(222, -106),  new Vector2(220, -210),  new Vector2(251, -163),  0,  50);
 			track.addCurveLR(new Vector2(-100, -210), new Vector2(-150, -87), new Vector2(-205, -163),  0,  50);
 			
-			track.addFinishLine(5, 223, 25,148);
+			track.addFinishLine(5, 223, 8,148);
 		}
 		
 		debugRenderer = new Box2DDebugRenderer();
@@ -128,6 +130,7 @@ public class Race implements ContactListener, State{
 		camManager = new CameraManager();
 		cars = new ArrayList<Car>();
 		oilSprites = Collections.synchronizedList(new ArrayList<Sprite>());
+		
 		ended = false;
 		this.stateMachine = stateMachine;
 	}
@@ -173,9 +176,6 @@ public class Race implements ContactListener, State{
 			finally{
 				sem.release();
 			}		
-						
-
-			debugRenderer.render(world, camera.combined);		
 			
 			handleInput(Gdx.graphics.getDeltaTime());
 			
@@ -370,25 +370,46 @@ public class Race implements ContactListener, State{
 	 * Checks for the end of the race, and ocasionally causes slippery oil to appear on the field. 
 	 */
 	@Override
-	public void update() { //Ate faz sentido q o oleo caia sempre debaixo do carro pq 100 posiçoes sao 100 ticks e isso (provavelmente) calha sempre debaixo do carro. O q eu n percebo e cmo eq a lista se ta a esvaziar...
+	public void update() { 
 		checkEnd();
 		if (ended)
 			this.stateMachine.setState(new ScoreMenu(this.positions, this.lobby, this.stateMachine));
-		if (oilPoints.size() < 100){
-			Random randy = new Random();
-			this.oilPoints.add(this.cars.get(randy.nextInt(this.cars.size())).getPosition());			
+		Random randy = new Random();
+		if (oilPoints.size() < 100 && randy.nextInt(10000) < 20){
+			Car car = this.cars.get(randy.nextInt(this.cars.size()));
+			Vector2 pos = car.getPosition();
+			pos.x -= 60*Math.cos(car.getAngle());
+			pos.y -= 60*Math.sin(car.getAngle());
+			this.oilPoints.add(pos);
+						
 		}
-		Random rand = new Random();
-		if (rand.nextInt(10000) < 20){
-			Vector2 pos = this.oilPoints.get(rand.nextInt(this.oilPoints.size()));
-			
+		if (randy.nextInt(10000) < 20 && oilPoints.size() > 1){
+			Vector2 pos = this.oilPoints.get(randy.nextInt(this.oilPoints.size()));
 			createOil(pos);
 		}
 		
-		for(Body body: deleteQueue)
+		for(Body body: deleteQueueBody)
 		{
 			this.world.destroyBody(body);
-			deleteQueue.removeFirstOccurrence(body);
+			deleteQueueBody.removeFirstOccurrence(body);
+			
+		}
+		ListIterator<Sprite> it = deleteQueueSprite.listIterator();
+		while(it.hasNext()){
+			Sprite spr = it.next();
+			try {
+				sem.acquire();
+				oilSprites.remove(spr);
+				deleteQueueSprite.removeFirstOccurrence(spr);
+				it = deleteQueueSprite.listIterator();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally
+			{
+				sem.release();
+			}
 		}
 	}
 	/**
@@ -431,20 +452,8 @@ public class Race implements ContactListener, State{
 			@Override
 			public void run(){
 				try {Thread.sleep(OIL_DURATION);} catch (InterruptedException e) {}
-				Race.this.deleteQueue.add(oil);
-				try {
-					sem.acquire();
-					oilSprites.remove(blotch);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				finally
-				{
-					sem.release();
-				}
-					
-				
+				Race.this.deleteQueueBody.add(oil);
+				Race.this.deleteQueueSprite.add(blotch);	
 			}
 		};
 		t.start();

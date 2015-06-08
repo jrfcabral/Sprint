@@ -28,9 +28,11 @@ public class ConnectMenu {
 	BufferedReader reader;
 	String color;
 	boolean ack;
+	boolean ok;
 	
 	public ConnectMenu(){
 		ack = false;
+		ok = true;
 		connectMenu = new Stage();
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
@@ -55,26 +57,25 @@ public class ConnectMenu {
 					testSocket.getOutputStream().write(test.getBytes());
 					testSocket.getOutputStream().flush();					
 					
-				} catch (UnknownHostException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				} catch (Exception e) {
+					ip.setText("Server not found at the address");
+					ok = false;
 				}
 				
-				try{										
-					System.out.println(testSocket.getInputStream().available());
-					String response = reader.readLine();
-					String[] tokens = response.split(" ");
-					
-					System.out.println(response);
-					if(tokens[0].equals("Received")){
-						 if(!tokens[1].equals("Full")){
-							 color = tokens[1];
-							 ack = true;
-						 }
-							
-						 
+				try{	
+					if(ok){
+						String response = reader.readLine();
+						String[] tokens = response.split(" ");
+						
+						System.out.println(response);
+						if(tokens[0].equals("Received")){
+							 if(!tokens[1].equals("Full")){
+								 color = tokens[1];
+								 ack = true;
+							 }			 
+						}
 					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
