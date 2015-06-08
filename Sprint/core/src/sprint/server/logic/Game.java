@@ -12,12 +12,11 @@ import com.badlogic.gdx.graphics.GL20;
  * Represents the game application by itself. Holds the state machine and performs the main update and draw cycle on it. 
  */
 public class Game extends ApplicationAdapter {
-	public static enum GameState{
+	/*public static enum GameState{
 		Main, Lobby, InGame
-	}
+	}*/
 	
 	
-	GameState state;
 	Race race;	
 	StateMachine stateMachine;
 	MainMenu main;
@@ -31,7 +30,7 @@ public class Game extends ApplicationAdapter {
 	public void create () {
 
 		stateMachine = new StateMachine();
-		state = GameState.Main;		
+		
 		pcControls = true;		
 		main = new MainMenu(stateMachine);		
 	}
@@ -50,12 +49,6 @@ public class Game extends ApplicationAdapter {
 
 	
 	
-	public void handleInput(float deltaTime){			
-		if (state ==GameState.InGame)
-			if (Gdx.input.isKeyPressed(Keys.ESCAPE)){
-				stateMachine.setState(race);
-			}
-	}
 	
 	/**
 	 * Asks the current state to perform the appropriate actions when the user adjusts window size
