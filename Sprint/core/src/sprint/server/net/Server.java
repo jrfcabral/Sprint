@@ -56,21 +56,22 @@ public class Server {
                 	System.out.println(message);
                 	
                 	if(message.equals("TEST")){
-                		lobby.addToQueue(socket.getInetAddress().toString());
+                		
+                		
                 		switch(lobby.getQueueSize()){
-                			case 1:
+                			case 0:
                 				out.write("Received Red\n".getBytes());
                 				break;
-                			case 2:
+                			case 1:
                 				out.write("Received Blue\n".getBytes());
                 				break;
-                			case 3:
+                			case 2:
                 				out.write("Received Green\n".getBytes());
                 				break;
-                			case 4:
+                			case 3:
                 				out.write("Received Pink\n".getBytes());
                 				break;
-                			case 5:
+                			case 4:
                 				out.write("Received Orange\n".getBytes());
                 				break;
                 			default: 
@@ -79,7 +80,10 @@ public class Server {
                 		}
                 		
                 		out.flush();
-                		                		               		                		
+                		 
+                		if(lobby.getQueueSize() < lobby.MAX_PLAYERS){
+                			lobby.addToQueue(socket.getInetAddress().toString());
+                		}
                 	}
                 	if (message.equals("LEAVE")){                		
                 		Server.this.unbindId(socket.getInetAddress().toString());

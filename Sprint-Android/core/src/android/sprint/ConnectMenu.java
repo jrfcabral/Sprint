@@ -72,7 +72,10 @@ public class ConnectMenu {
 							 if(!tokens[1].equals("Full")){
 								 color = tokens[1];
 								 ack = true;
-							 }			 
+							 }
+							 else{
+								 ip.setText("The room is full. Try again in a few minutes");
+							 }
 						}
 					}
 					
