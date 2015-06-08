@@ -36,7 +36,7 @@ public class ConnectMenu {
 		
 		ip = new TextArea("192.168.1.10", skin);
 		ip.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
-		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*2.0f);
+		ip.setPosition(Gdx.graphics.getWidth()/2.0f - ip.getWidth()/2.0f, Gdx.graphics.getHeight() - ip.getHeight()*4.0f);
 		
 		port = new TextArea("8888", skin);
 		port.setSize(Gdx.graphics.getWidth()*0.6f, Gdx.graphics.getHeight()*0.1f);
@@ -99,11 +99,11 @@ public class ConnectMenu {
 		connectMenu.addActor(ip);
 		connectMenu.addActor(port);
 		connectMenu.addActor(connect);
-		connectMenu.addActor(back);
+		//connectMenu.addActor(back);
 	}
 	
 	public void draw(){
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0.66f, 0.66f, 0.66f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		connectMenu.draw();
 	}
