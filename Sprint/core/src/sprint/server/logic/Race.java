@@ -148,6 +148,13 @@ public class Race implements ContactListener, State{
 			batch.end();
 			try {
 				sem.acquire();
+				
+				while(itt.hasNext()){
+					Sprite oil = itt.next();
+					batch.begin();
+					oil.draw(batch);
+					batch.end();
+				}
 				while(it.hasNext()){
 					Car car = it.next();
 					batch.begin();
@@ -157,12 +164,7 @@ public class Race implements ContactListener, State{
 					if (!car.getAlive())
 						it.remove();					
 				}
-				while(itt.hasNext()){
-					Sprite oil = itt.next();
-					batch.begin();
-					oil.draw(batch);
-					batch.end();
-				}
+				
 			} catch (InterruptedException e) {
 				
 			}	
@@ -368,13 +370,13 @@ public class Race implements ContactListener, State{
 	 * Checks for the end of the race, and ocasionally causes slippery oil to appear on the field. 
 	 */
 	@Override
-	public void update() {
+	public void update() { //Ate faz sentido q o oleo caia sempre debaixo do carro pq 100 posiçoes sao 100 ticks e isso (provavelmente) calha sempre debaixo do carro. O q eu n percebo e cmo eq a lista se ta a esvaziar...
 		checkEnd();
 		if (ended)
 			this.stateMachine.setState(new ScoreMenu(this.positions, this.lobby, this.stateMachine));
 		if (oilPoints.size() < 100){
-			Random rand = new Random();
-			this.oilPoints.add(this.cars.get(rand.nextInt(this.cars.size())).getPosition());			
+			Random randy = new Random();
+			this.oilPoints.add(this.cars.get(randy.nextInt(this.cars.size())).getPosition());			
 		}
 		Random rand = new Random();
 		if (rand.nextInt(10000) < 20){

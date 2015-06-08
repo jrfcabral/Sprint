@@ -202,7 +202,7 @@ public class Car {
 			if(this.getVelocity() < 300f)
 				body.applyForce(new Vector2(1050,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 			if(this.getVelocity() < 150f)
-				body.applyForce(new Vector2(1150,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
+				body.applyForce(new Vector2(1550,0).rotate((float) Math.toDegrees(body.getAngle())), body.getWorldCenter(), true);
 		}
 
 		if (!throttle && getVelocity() <0.5f)
