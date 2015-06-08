@@ -67,7 +67,7 @@ public class ConnectMenu {
 						String response = reader.readLine();
 						String[] tokens = response.split(" ");
 						
-						System.out.println(response);
+						
 						if(tokens[0].equals("Received")){
 							 if(!tokens[1].equals("Full")){
 								 color = tokens[1];

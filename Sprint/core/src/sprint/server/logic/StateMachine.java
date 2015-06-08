@@ -23,8 +23,7 @@ public class StateMachine {
 	 * @param state the new state to be switched to
 	 */
 	public void setState(State state)
-	{
-		System.out.println("machine state switching");
+	{	
 		this.state = state;
 	}
 	
@@ -53,7 +52,7 @@ public class StateMachine {
 		return this.server;
 	}
 	public Lobby getLobby(){
-		if (lobby == null)System.out.println("erro aqui");
+		
 		return this.lobby;
 	}
 	

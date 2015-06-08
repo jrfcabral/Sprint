@@ -83,7 +83,7 @@ public class LobbyMenu implements State {
 	public void update() {
 		if (lobby.getElapsed() > Lobby.READY_TIMER)
 		{
-			System.out.println("Vou mudar");
+			
 			this.lobby.stopTimer();
 			Race race = new Race(state, lobby);
 			race.startGame(this.lobby.getIdentifiers());
