@@ -300,12 +300,10 @@ public class Race implements ContactListener, State{
 		else
 			return;
 		
-		if (car.getLinearVelocity().x*DIRECTION > 0){
-			System.out.println("dei uma voltinha na minha lambreta");
+		if (car.getLinearVelocity().x*DIRECTION > 0){			
 			car.incrementLap();
 		}
-		else{
-			System.out.println("desdei uma voltinha na minha lambreta");
+		else{			
 			car.decrementLap();
 		}
 		

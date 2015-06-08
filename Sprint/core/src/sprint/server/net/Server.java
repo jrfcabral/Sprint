@@ -24,9 +24,7 @@ public class Server {
 	
 	private class ServerThread implements Runnable{		
 		@Override
-		public void run() {
-			System.out.println("Thread is running");
-			System.out.println(PlayerControls.Command.BRAKE.toString());
+		public void run() {			
 	          
         	ServerSocket serverSocket = null;
             try {
@@ -50,10 +48,7 @@ public class Server {
                 	if(bindings.get(socket.getInetAddress().toString()) != null){
                 		command.handleCommand(bindings.get(socket.getInetAddress().toString()));
                 		//System.out.println("Disse vou-te encontrar e encontrei");
-                	}
-                	
-                	System.out.println("From ip " + socket.getInetAddress() + ":");
-                	System.out.println(message);
+                	}    	
                 	
                 	if(message.equals("TEST")){
                 		lobby.addToQueue(socket.getInetAddress().toString());
@@ -137,8 +132,7 @@ public class Server {
 	 * @param identifier
 	 * @param playerControls
 	 */
-	public void bindId(String identifier, PlayerControls playerControls) {	
-		System.out.println("Binding " + identifier);
+	public void bindId(String identifier, PlayerControls playerControls) {		
 		this.bindings.put(identifier, playerControls);
 		if (this.bindings.get(identifier) == null)
 			throw new IllegalArgumentException();
