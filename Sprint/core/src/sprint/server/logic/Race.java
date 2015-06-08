@@ -38,7 +38,7 @@ public class Race implements ContactListener, State{
 	private static final int OIL_DURATION = 10000;
 	private static final int OIL_SIZE = 4;
 	private static final int DIRECTION = 1;
-	private static final int LAP_NUMBER = 1;
+	private static final int LAP_NUMBER = 3;
 	private Texture trackTex;
 
 	private SpriteBatch batch;
@@ -66,53 +66,58 @@ public class Race implements ContactListener, State{
 		world.setContactListener(this);
 		batch = new SpriteBatch();
 		track = new Track(world);
-
-		trackTex = new Texture("track02.png");
-		/*track.addSegment(-350, -310, 350, -310);
-		track.addSegment(-350, 300, 350, 300);
-		track.addSegment(-350, -350, -350, 350);
-		track.addSegment(352, -350, 352, 350);
-		track.addCurveLR(new Vector2(-300, -310), new Vector2(-350, -200), new Vector2(-350, -200), 0, 50);
-		track.addCurveLR(new Vector2(-300, 300), new Vector2(-350, 200), new Vector2(-350, 200), 0, 50);
-		track.addCurveLR(new Vector2(300, -310), new Vector2(350, -230), new Vector2(350, -230), 0, 50);
-		track.addCurveLR(new Vector2(300, 310), new Vector2(355, 200), new Vector2(355, 200), 0, 50);
-		
-		track.addSegment(-170, -158, 176, -158);
-		track.addSegment(-170, 146, 176, 146);
-		track.addSegment(-195, -110, -195, 100);
-		track.addSegment(200, -110, 200, 100);
-		track.addCurveLR(new Vector2(-165, -158), new Vector2(-195, -110), new Vector2(-195, -110), 0, 50);
-		track.addCurveLR(new Vector2(-165, 148), new Vector2(-195, 100), new Vector2(-195, 100), 0, 50);
-		track.addCurveLR(new Vector2(170, -158), new Vector2(200, -100), new Vector2(200, -110), 0, 50);
-		track.addCurveLR(new Vector2(170, 148), new Vector2(200, 100), new Vector2(200, 100), 0, 50);
-		
-		track.addFinishLine(5, 223, 25,148);*/
-		
-		track.addSegment(-350, -310, 350, -310);
-		track.addSegment(-350, 300, 350, 300);
-		track.addSegment(-350, -350, -350, 350);
-		track.addSegment(352, -350, 352, 350);
-		track.addCurveLR(new Vector2(-300, -310), new Vector2(-350, -200), new Vector2(-350, -200), 0, 50);
-		track.addCurveLR(new Vector2(-300, 300), new Vector2(-350, 200), new Vector2(-350, 200), 0, 50);
-		track.addCurveLR(new Vector2(300, -310), new Vector2(350, -230), new Vector2(350, -230), 0, 50);
-		track.addCurveLR(new Vector2(300, 310), new Vector2(355, 200), new Vector2(355, 200), 0, 50);
-		
-		track.addSegment(-170, 146, 176, 146);
-		
-		track.addCurveLR(new Vector2(-350, -87), new Vector2(-350, 76), new Vector2(-200, -5), 0, 50);
-		track.addCurveLR(new Vector2(-150, -87), new Vector2(-150, 76), new Vector2(0, -5), 0, 50);
-		track.addCurveLR(new Vector2(-150, 76), new Vector2(-170, 146), new Vector2(-210, 111), 0, 50);
-		track.addSegment(176, 146, -50, -87);
-		track.addSegment(352, 146, 50, -87);
-		track.addSegment(352, 116, 50, -117);
-		track.addCurveLR(new Vector2(50, -117), new Vector2(50, -87), new Vector2(30, -112), 0, 50);
-		track.addSegment(222, -106, 50, -200);
-		track.addCurveLR(new Vector2(50, -200), new Vector2(-50, -87), new Vector2(-100, -184), 0, 50);
-		track.addSegment(-100, -210, 220, -210);
-		track.addCurveLR(new Vector2(222, -106),  new Vector2(220, -210),  new Vector2(251, -163),  0,  50);
-		track.addCurveLR(new Vector2(-100, -210), new Vector2(-150, -87), new Vector2(-205, -163),  0,  50);
-		
-		track.addFinishLine(5, 223, 25,148);
+		Random rand = new Random();
+		int trackNum = rand.nextInt(2);
+		if(trackNum == 0){
+			trackTex = new Texture("track01.png");
+			track.addSegment(-350, -310, 350, -310);
+			track.addSegment(-350, 300, 350, 300);
+			track.addSegment(-350, -350, -350, 350);
+			track.addSegment(352, -350, 352, 350);
+			track.addCurveLR(new Vector2(-300, -310), new Vector2(-350, -200), new Vector2(-350, -200), 0, 50);
+			track.addCurveLR(new Vector2(-300, 300), new Vector2(-350, 200), new Vector2(-350, 200), 0, 50);
+			track.addCurveLR(new Vector2(300, -310), new Vector2(350, -230), new Vector2(350, -230), 0, 50);
+			track.addCurveLR(new Vector2(300, 310), new Vector2(355, 200), new Vector2(355, 200), 0, 50);
+			
+			track.addSegment(-170, -158, 176, -158);
+			track.addSegment(-170, 146, 176, 146);
+			track.addSegment(-195, -110, -195, 100);
+			track.addSegment(200, -110, 200, 100);
+			track.addCurveLR(new Vector2(-165, -158), new Vector2(-195, -110), new Vector2(-195, -110), 0, 50);
+			track.addCurveLR(new Vector2(-165, 148), new Vector2(-195, 100), new Vector2(-195, 100), 0, 50);
+			track.addCurveLR(new Vector2(170, -158), new Vector2(200, -100), new Vector2(200, -110), 0, 50);
+			track.addCurveLR(new Vector2(170, 148), new Vector2(200, 100), new Vector2(200, 100), 0, 50);
+			
+			track.addFinishLine(5, 223, 25,148);
+		}
+		else{
+			trackTex = new Texture("track02.png");
+			track.addSegment(-350, -310, 350, -310);
+			track.addSegment(-350, 300, 350, 300);
+			track.addSegment(-350, -350, -350, 350);
+			track.addSegment(352, -350, 352, 350);
+			track.addCurveLR(new Vector2(-300, -310), new Vector2(-350, -200), new Vector2(-350, -200), 0, 50);
+			track.addCurveLR(new Vector2(-300, 300), new Vector2(-350, 200), new Vector2(-350, 200), 0, 50);
+			track.addCurveLR(new Vector2(300, -310), new Vector2(350, -230), new Vector2(350, -230), 0, 50);
+			track.addCurveLR(new Vector2(300, 310), new Vector2(355, 200), new Vector2(355, 200), 0, 50);
+			
+			track.addSegment(-170, 146, 176, 146);
+			
+			track.addCurveLR(new Vector2(-350, -87), new Vector2(-350, 76), new Vector2(-200, -5), 0, 50);
+			track.addCurveLR(new Vector2(-150, -87), new Vector2(-150, 76), new Vector2(0, -5), 0, 50);
+			track.addCurveLR(new Vector2(-150, 76), new Vector2(-170, 146), new Vector2(-210, 111), 0, 50);
+			track.addSegment(176, 146, -50, -87);
+			track.addSegment(352, 146, 50, -87);
+			track.addSegment(352, 116, 50, -117);
+			track.addCurveLR(new Vector2(50, -117), new Vector2(50, -87), new Vector2(30, -112), 0, 50);
+			track.addSegment(222, -106, 50, -200);
+			track.addCurveLR(new Vector2(50, -200), new Vector2(-50, -87), new Vector2(-100, -184), 0, 50);
+			track.addSegment(-100, -210, 220, -210);
+			track.addCurveLR(new Vector2(222, -106),  new Vector2(220, -210),  new Vector2(251, -163),  0,  50);
+			track.addCurveLR(new Vector2(-100, -210), new Vector2(-150, -87), new Vector2(-205, -163),  0,  50);
+			
+			track.addFinishLine(5, 223, 25,148);
+		}
 		
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Settings.VIEWPORT_WIDTH, Settings.VIEWPORT_HEIGHT);

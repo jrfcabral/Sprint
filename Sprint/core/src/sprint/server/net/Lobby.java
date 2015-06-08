@@ -9,7 +9,7 @@ import java.util.TimerTask;
   */
 public class Lobby {
 	public static final int MAX_PLAYERS = 5;
-	public static final int READY_TIMER = 20;
+	public static final int READY_TIMER = 3;
 	
 	private LinkedList<String> players;
 	private int elapsed = 0;
